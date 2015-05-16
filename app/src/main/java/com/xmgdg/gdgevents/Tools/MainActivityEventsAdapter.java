@@ -54,7 +54,7 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 		View v = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.main_events_card_view, parent, false);
 		// set the view's size, margins, paddings and layout parameters
-		ViewHolder vh = new ViewHolder((LinearLayout) v);
+		ViewHolder vh = new ViewHolder((CardView) v);
 		return vh;
 	}
 
