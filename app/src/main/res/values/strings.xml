@@ -3,4 +3,6 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="drawer_open">开启抽屉</string>
+    <string name="drawer_close">关闭抽屉</string>
 </resources>

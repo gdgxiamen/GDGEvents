@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.DrawerLayout
     android:id="@+id/Material_tool_bar_Drawer"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -9,27 +10,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-        <!-- 抽屉导航布局 -->
 
         <include
             android:id="@+id/tool_bar"
             layout="@layout/tool_bar">
         </include>
-
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/mainActivitySwipeToRefreash"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/mainActivityRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"/>
-        </android.support.v4.widget.SwipeRefreshLayout>
-
 
     </LinearLayout>
 
@@ -37,7 +24,11 @@
         android:id="@+id/DrawerRecyclerView"
         android:layout_width="320dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
+        android:layout_gravity="left"
+
         android:background="#ffffff"
-        android:scrollbars="vertical"/>
+        android:scrollbars="vertical">
+
+    </android.support.v7.widget.RecyclerView>
+
 </android.support.v4.widget.DrawerLayout>

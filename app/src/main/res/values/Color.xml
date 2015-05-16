@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Apptheme:Cyan-->
+    <color name="Apptheme_500">#00BCD4</color>
+    <color name="Apptheme_300">#4DD0E1</color>
+    <color name="Apptheme_700">#0097A7</color>
+    <color name="Apptheme_900">#006064</color>
+    <!--colorAccent:Red-->
+    <color name="colorAccent">#F44336</color>
+</resources>
