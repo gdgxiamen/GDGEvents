@@ -3,6 +3,9 @@ package com.xmgdg.gdgevents.Tools;
 
 /**
  * Created by Yulan on 2015/5/16.
+ * 主界面,举办的活动数组
+ * MainEventsEachItem 是单个活动,由 举办时间,活动标题和活动地点组成
+ * MainEventsItems 构造时传入 举办时间,活动标题和活动地点组成 的数组
  */
 public class MainEventsItems {
 

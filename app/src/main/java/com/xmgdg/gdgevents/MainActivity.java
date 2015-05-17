@@ -15,7 +15,10 @@ import com.xmgdg.gdgevents.Tools.MainEventsItems;
 import com.xmgdg.gdgevents.Tools.MaterialDrawer;
 import com.xmgdg.gdgevents.Tools.Tool;
 
-
+/**
+ * 主界面,显示举办的活动
+ *
+ * */
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
 	//toolbar
@@ -63,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	@Override
 	protected void onResume() {
 		super.onResume();
+
+		//测试数据
 		String[] eventsTime = {"2013-3-13 13:00  ", "2015-05-15 15:00  "};
 		String[] eventsTitle = {"GDG Xiamen Setup 厦门谷歌开发者社区成立大会", "厦门GDG【社区开源APP项目讨论】"};
 		String[] eventsLocation = {"中国福建省厦门思明区环岛南路亚洲海湾大酒店", "厦门市软件园二期望海路31号1楼厦门GDG孵化器 "};
@@ -95,11 +100,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		return super.onOptionsItemSelected(item);
 	}
 
+	//SwipeRefreshLayout 的刷新调用
 	@Override
 	public void onRefresh() {
 		if (!isRefresh) {
 			isRefresh = true;
 			//todo: 刷新
+			swipeLayout.setRefreshing(false);
 		}
 	}
 }

@@ -2,6 +2,7 @@ package com.xmgdg.gdgevents.Tools;
 
 /**
  * Created by 雨蓝 on 2015/4/4.
+ * 抽屉的 RecyclerView 适配器
  */
 
 import android.app.Activity;
@@ -22,6 +23,7 @@ public class MetarialDrawerAdapter extends RecyclerView.Adapter<MetarialDrawerAd
 
 	private static final int TYPE_HEADER = 0;
 	private static final int TYPE_ITEM = 1;
+	private final String logtag = "抽屉适配器";
 
 	private String mNavTitles[];
 	private int mIcons[];
@@ -129,7 +131,7 @@ public class MetarialDrawerAdapter extends RecyclerView.Adapter<MetarialDrawerAd
 			try {
 				holder.profile.setImageURI(profile);
 			} catch (Exception e) {
-				Log.e("材料主题", "用户图片不存在");
+				Log.e(logtag, "用户图片不存在");
 			}
 
 			holder.Name.setText(name);

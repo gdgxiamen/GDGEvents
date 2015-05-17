@@ -3,7 +3,7 @@ package com.xmgdg.gdgevents.Tools;
 
 import android.app.Activity;
 import android.support.v4.widget.DrawerLayout;
-import android.widget.Toast;
+import android.util.Log;
 
 
 /**
@@ -12,6 +12,8 @@ import android.widget.Toast;
  */
 public class MaterialDrawerOnClickLis {
 
+	private final String logtag = "抽屉按键监听" ;
+
 	//设置抽屉的点击监听器
 	public void setDrawerIntent(Activity activity, int Position,
 	                            DrawerLayout mDrawerLayout) {
@@ -19,7 +21,7 @@ public class MaterialDrawerOnClickLis {
 		switch (Position) {
 
 			default:
-				Toast.makeText(activity.getApplicationContext(), "异常按动", Toast.LENGTH_LONG).show();
+				Log.d(logtag,"未定义的按键");
 
 		}
 

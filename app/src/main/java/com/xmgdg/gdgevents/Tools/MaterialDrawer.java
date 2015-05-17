@@ -15,6 +15,9 @@ import com.xmgdg.gdgevents.R;
 
 /**
  * Created by Yulan on 2015/5/16.
+ * 材料抽屉类
+ * 更改  String TITLES[] 和 int ICONS[] 可以增减抽屉项目
+ * 构造时传入 Activity 和 Toolbar 即可.
  */
 public class MaterialDrawer {
 

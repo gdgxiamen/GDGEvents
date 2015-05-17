@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.xmgdg.gdgevents.R;
@@ -15,6 +14,8 @@ import com.xmgdg.gdgevents.R;
 
 /**
  * Created by Yulan on 2015/5/16.
+ * 主界面,举办的活动 RecyclerView 适配器
+ * 按键监听器在 ViewHolder 内添加,
  */
 public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivityEventsAdapter.ViewHolder> {
 
@@ -44,6 +45,7 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 			eventTitle = (TextView) v.findViewById(R.id.events_title_text_view);
 			eventLocation = (TextView) v.findViewById(R.id.events_location_text_view);
 
+			//todo:可在这里添加部件的按键监听
 		}
 	}
 
