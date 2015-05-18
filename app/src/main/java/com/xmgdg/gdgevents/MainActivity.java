@@ -23,8 +23,10 @@ import com.xmgdg.gdgevents.Tools.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.Tools.MainEventsItems;
 import com.xmgdg.gdgevents.Tools.MaterialDrawer;
 import com.xmgdg.gdgevents.Tools.Tool;
+import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
+import com.xmgdg.gdgevents.network.TopicRequest;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		initData();
 		//Toolbar
 		toolbar = (Toolbar) findViewById(R.id.tool_bar);
 		setSupportActionBar(toolbar);
@@ -81,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 	}
 
+
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -99,23 +102,17 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	}
 
 	private void initData() {
-		RequestQueue queue = Volley.newRequestQueue(this);
-		// Request a string response from the provided URL.
-		StringRequest stringRequest = new StringRequest(Request.Method.GET, RequestManager.API_XIAMEN, new Response.Listener<String>() {
+		RequestManager.getInstance().getTopicInfo(new Response.Listener<List<Topic>>() {
 			@Override
-			public void onResponse(String response) {
-                Topic[] topics = new Gson().fromJson(response, Topic[].class);
-                List<Topic> topicList = Arrays.asList(topics);
-				Collections.reverse(topicList);
-				int size = topicList.size();
+			public void onResponse(List<Topic> response) {
+				int size = response.size();
 				String[] eventsTime = new String[size];
 				String[] eventsTitle = new String[size];
 				String[] eventsLocation = new String[size];
-				Log.e(TAG, topicList.get(0).toString());
 				for (int i = 0; i < size; i++) {
-					eventsTime[i] = topicList.get(i).getStart();
-					eventsTitle[i] = topicList.get(i).getTitle();
-					eventsLocation[i] = topicList.get(i).getLocation();
+					eventsTime[i] = response.get(i).getStart().replace("+0800","");
+					eventsTitle[i] = response.get(i).getTitle();
+					eventsLocation[i] = response.get(i).getLocation();
 				}
 				mainEventsItems = new MainEventsItems(eventsTime, eventsTitle, eventsLocation);
 				//RecyclerView 数据填充
@@ -128,9 +125,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 				Toast.makeText(MainActivity.this, "network error", Toast.LENGTH_LONG).show();
 			}
 		});
-		// Add the request to the RequestQueue.
-		queue.add(stringRequest);
 	}
+
+
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -160,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		if (!isRefresh) {
 			isRefresh = true;
 			//todo: 刷新
+
 			swipeLayout.setRefreshing(false);
 		}
 	}

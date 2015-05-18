@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 /**
  * Created by ye on 15/5/17.
+ *
  */
 public class Topic {
 
@@ -146,22 +147,22 @@ public class Topic {
     }
 
 
-    public static Topic fromJson(JSONObject json) throws JSONException {
-        Topic topic = new Topic();
-        topic.group = json.getString("group");
-        topic.description = json.getString("description");
-        topic.start = json.getString("start");
-        topic.timezoneName = json.getString("timezoneName");
-        topic.participantsCount = json.getString("participantsCount");
-        topic.title = json.getString("title");
-        topic.iconUrl = json.getString("iconUrl");
-        topic.link = json.getString("link");
-        topic.location = json.getString("location");
-        topic.end = json.getString("end");
-        topic.id = json.getString("id");
-        topic.temporalRelation = json.getString("temporalRelation");
-        topic.gPlusEventLink = json.getString("gPlusEventLink");
-
-        return topic;
-    }
+//    public static Topic fromJson(JSONObject json) throws JSONException {
+//        Topic topic = new Topic();
+//        topic.group = json.getString("group");
+//        topic.description = json.getString("description");
+//        topic.start = json.getString("start");
+//        topic.timezoneName = json.getString("timezoneName");
+//        topic.participantsCount = json.getString("participantsCount");
+//        topic.title = json.getString("title");
+//        topic.iconUrl = json.getString("iconUrl");
+//        topic.link = json.getString("link");
+//        topic.location = json.getString("location");
+//        topic.end = json.getString("end");
+//        topic.id = json.getString("id");
+//        topic.temporalRelation = json.getString("temporalRelation");
+//        topic.gPlusEventLink = json.getString("gPlusEventLink");
+//
+//        return topic;
+//    }
 }
