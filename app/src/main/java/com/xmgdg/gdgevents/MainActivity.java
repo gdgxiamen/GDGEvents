@@ -27,6 +27,7 @@ import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,7 +37,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
 	//TAG
-	private static final String TAG = "TAGTAG";
+	private static final String TAG = MainActivity.class.getName();
 
 	//toolbar
 	private Toolbar toolbar;
@@ -105,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 			public void onResponse(String response) {
                 Topic[] topics = new Gson().fromJson(response, Topic[].class);
                 List<Topic> topicList = Arrays.asList(topics);
+				Collections.reverse(topicList);
 				int size = topicList.size();
 				String[] eventsTime = new String[size];
 				String[] eventsTitle = new String[size];
