@@ -8,7 +8,7 @@
     <dimen name="events_title_text_size">20sp</dimen>
     <dimen name="events_title_side_margin">30dp</dimen>
     <dimen name="events_title_top_margin">8dp</dimen>
-    <dimen name="events_date_top_margin">8dp</dimen>
+    <dimen name="events_date_top_margin">16dp</dimen>
     <dimen name="card_margin">8dp</dimen>
     <dimen name="icon_width_event">8dp</dimen>
 </resources>

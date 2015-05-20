@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.xmgdg.gdgevents.R;
+import com.xmgdg.gdgevents.model.Topic;
+
+import java.util.List;
 
 
 /**
@@ -19,12 +22,13 @@ import com.xmgdg.gdgevents.R;
  */
 public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivityEventsAdapter.ViewHolder> {
 
-	private MainEventsItems mainEventsItems;
 	private Activity activity;
 	private static String logtag = "主界面活动适配器";
 
-	public MainActivityEventsAdapter(MainEventsItems mainEventsItems, Activity activity) {
-		this.mainEventsItems = mainEventsItems;
+	private List<Topic> topicList;
+
+	public MainActivityEventsAdapter(List<Topic> topicList, Activity activity) {
+		this.topicList = topicList;
 		this.activity = activity;
 	}
 
@@ -41,7 +45,7 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 					Log.d(logtag, "onClick--> position = " + getPosition());
 				}
 			});
-
+			//todo:移除就界面
 			eventTime = (TextView) v.findViewById(R.id.events_time_text_view);
 			eventTitle = (TextView) v.findViewById(R.id.events_title_text_view);
 			eventLocation = (TextView) v.findViewById(R.id.events_location_text_view);
@@ -69,13 +73,29 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 
 	@Override
 	public void onBindViewHolder(ViewHolder holder, int position) {
-		holder.eventTime.setText(mainEventsItems.MainEventsItems[position].eventsTime);
-		holder.eventTitle.setText(mainEventsItems.MainEventsItems[position].eventsTitle);
-		holder.eventLocation.setText(mainEventsItems.MainEventsItems[position].eventsLocation);
+
+		//todo:移除就界面
+		//删除 +0800
+		holder.eventTime.setText(topicList.get(position).getStart().replace("+0800", ""));
+		holder.eventTitle.setText(topicList.get(position).getTitle());
+		holder.eventLocation.setText(topicList.get(position).getLocation());
+
+		holder.EventTime.setText(topicList.get(position).getStart().replace("+0800", ""));
+		holder.EventTitle.setText(topicList.get(position).getTitle());
+		holder.EventLocation.setText(topicList.get(position).getLocation());
+		holder.EventEndTime.setText("结束于:" + topicList.get(position).getEnd());
+
 	}
 
 	@Override
 	public int getItemCount() {
-		return mainEventsItems == null ? 0 : mainEventsItems.MainEventsItems.length;
+		return topicList == null ? 0 : topicList.size();
 	}
+
+	//更新数据
+	public void notifyDateChanged(List<Topic> topicList) {
+		this.topicList = topicList;
+		this.notifyDataSetChanged();
+	}
+
 }

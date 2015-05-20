@@ -23,6 +23,9 @@ import com.xmgdg.gdgevents.network.RequestManager;
 
 import java.util.List;
 
+import de.keyboardsurfer.android.widget.crouton.Crouton;
+import de.keyboardsurfer.android.widget.crouton.Style;
+
 /**
  * 主界面,显示举办的活动
  *
@@ -91,18 +94,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		RequestManager.getInstance().getTopicInfo(new Response.Listener<List<Topic>>() {
 			@Override
 			public void onResponse(List<Topic> response) {
-				int size = response.size();
-				String[] eventsTime = new String[size];
-				String[] eventsTitle = new String[size];
-				String[] eventsLocation = new String[size];
-				for (int i = 0; i < size; i++) {
-					eventsTime[i] = response.get(i).getStart().replace("+0800","");
-					eventsTitle[i] = response.get(i).getTitle();
-					eventsLocation[i] = response.get(i).getLocation();
-				}
-				mainEventsItems = new MainEventsItems(eventsTime, eventsTitle, eventsLocation);
 				//RecyclerView 数据填充
-				mainActivityEventsAdapter = new MainActivityEventsAdapter(mainEventsItems, MainActivity.this);
+				mainActivityEventsAdapter = new MainActivityEventsAdapter(response, MainActivity.this);
 				mRecyclerView.setAdapter(mainActivityEventsAdapter);
 				swipeLayout.setRefreshing(false);
 				isRefresh = false;
@@ -110,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
-				Toast.makeText(MainActivity.this, "network error", Toast.LENGTH_LONG).show();
+				Crouton.makeText(MainActivity.this, getString(R.string.server_error), Style.ALERT).show();
 				swipeLayout.setRefreshing(false);
 				isRefresh = false;
 			}
@@ -148,6 +141,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		if (!isRefresh) {
 			isRefresh = true;
 			initData();
+
 		}
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		RequestManager.getInstance().cancel(this);
 	}
 }

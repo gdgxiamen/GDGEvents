@@ -28,18 +28,20 @@
                 android:id="@+id/event_image_header"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:background="?colorPrimary"
+                android:background="@color/Apptheme_700"
                 android:contentDescription="@null"/>
 
             <TextView
-                android:id="@+id/event_date"
+                android:id="@+id/event_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:paddingRight="8dp"
+                android:paddingRight="@dimen/margin_small"
                 android:paddingTop="@dimen/events_date_top_margin"
-                android:textColor="?android:textColorPrimary"
+                android:textColor="?android:textColorPrimaryInverse"
+                android:textSize="@dimen/normal_text_size"
+                android:textStyle="bold"
                 tools:ignore="RelativeOverlap"
                 tools:text="SAT, JUL 25"/>
 
@@ -53,7 +55,8 @@
                 android:layout_marginTop="24dp"
                 android:contentDescription="@null"
                 android:scaleType="fitXY"
-                android:src="@drawable/abc_ic_menu_share_mtrl_alpha"/>
+                android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:id="@+id/linearLayout"
@@ -63,6 +66,8 @@
                 android:layout_below="@id/event_image_header"
                 android:layout_marginBottom="@dimen/events_title_top_margin"
                 android:layout_marginTop="@dimen/events_title_top_margin"
+                android:layout_marginRight="@dimen/events_title_side_margin"
+                android:layout_marginLeft="@dimen/events_title_side_margin"
                 android:layout_toLeftOf="@+id/past"
                 android:layout_toRightOf="@+id/icon"
                 android:orientation="vertical">

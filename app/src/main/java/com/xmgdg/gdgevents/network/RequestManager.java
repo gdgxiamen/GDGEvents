@@ -44,4 +44,8 @@ public class RequestManager {
         mRequestQueue.add(new TopicRequest(listener, errorListener));
     }
 
+    /** **/
+    public void cancel(Object tag) {
+        mRequestQueue.cancelAll(tag);
+    }
 }

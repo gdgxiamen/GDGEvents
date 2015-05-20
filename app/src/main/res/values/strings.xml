@@ -6,4 +6,5 @@
     <string name="drawer_open">开启抽屉</string>
     <string name="drawer_close">关闭抽屉</string>
     <string name="past_event">过往事件</string>
+    <string name="server_error">服务错误,请重试</string>
 </resources>
