@@ -7,29 +7,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 import com.xmgdg.gdgevents.Tools.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.Tools.MainEventsItems;
 import com.xmgdg.gdgevents.Tools.MaterialDrawer;
 import com.xmgdg.gdgevents.Tools.Tool;
-import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
-import com.xmgdg.gdgevents.network.TopicRequest;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -87,17 +78,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	@Override
 	protected void onResume() {
 		super.onResume();
-
-		//测试数据
-//		String[] eventsTime = {"2013-3-13 13:00  ", "2015-05-15 15:00  "};
-//		String[] eventsTitle = {"GDG Xiamen Setup 厦门谷歌开发者社区成立大会", "厦门GDG【社区开源APP项目讨论】"};
-//		String[] eventsLocation = {"中国福建省厦门思明区环岛南路亚洲海湾大酒店", "厦门市软件园二期望海路31号1楼厦门GDG孵化器 "};
-//
-//		mainEventsItems = new MainEventsItems(eventsTime, eventsTitle, eventsLocation);
-//		//RecyclerView 数据填充
-//		mainActivityEventsAdapter = new MainActivityEventsAdapter(mainEventsItems, this);
-//		mRecyclerView.setAdapter(mainActivityEventsAdapter);
-
+		/*初始化时显示刷新进度条
+		* 第一行是解决初始化不出现刷新条的临时方法,后续可能会被 SwipeRefreshLayout 改进
+		* */
+		swipeLayout.setProgressViewOffset(false, 0,
+				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
+		swipeLayout.setRefreshing(true);
 		initData();
 	}
 
@@ -118,11 +104,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 				//RecyclerView 数据填充
 				mainActivityEventsAdapter = new MainActivityEventsAdapter(mainEventsItems, MainActivity.this);
 				mRecyclerView.setAdapter(mainActivityEventsAdapter);
+				swipeLayout.setRefreshing(false);
+				isRefresh = false;
 			}
 		}, new Response.ErrorListener() {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				Toast.makeText(MainActivity.this, "network error", Toast.LENGTH_LONG).show();
+				swipeLayout.setRefreshing(false);
+				isRefresh = false;
 			}
 		});
 	}
@@ -157,9 +147,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	public void onRefresh() {
 		if (!isRefresh) {
 			isRefresh = true;
-			//todo: 刷新
-
-			swipeLayout.setRefreshing(false);
+			initData();
 		}
 	}
 }

@@ -31,6 +31,7 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 	public static class ViewHolder extends RecyclerView.ViewHolder {
 		//界面元素
 		public TextView eventTime, eventTitle, eventLocation;
+		public TextView EventTime, EventTitle, EventLocation, EventEndTime;
 
 		public ViewHolder(View v) {
 			super(v);
@@ -44,6 +45,12 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 			eventTime = (TextView) v.findViewById(R.id.events_time_text_view);
 			eventTitle = (TextView) v.findViewById(R.id.events_title_text_view);
 			eventLocation = (TextView) v.findViewById(R.id.events_location_text_view);
+
+			EventTime = (TextView) v.findViewById(R.id.event_time);
+			EventTitle = (TextView) v.findViewById(R.id.event_title);
+			EventLocation = (TextView) v.findViewById(R.id.event_location);
+			EventEndTime = (TextView) v.findViewById(R.id.event_end_time);
+
 
 			//todo:可在这里添加部件的按键监听
 		}

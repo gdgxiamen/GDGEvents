@@ -1,7 +1,5 @@
 package com.xmgdg.gdgevents.network;
 
-import android.app.Application;
-
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;

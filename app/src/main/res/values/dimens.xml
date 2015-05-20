@@ -5,8 +5,10 @@
     <dimen name="tool_bar_top_padding">0dp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="normal_text_size">16sp</dimen>
-    <dimen name="events_title_text_size">30sp</dimen>
-    <dimen name="events_title_side_margin">30sp</dimen>
-    <dimen name="events_title_top_margin">8sp</dimen>
-    <dimen name="card_margin">8sp</dimen>
+    <dimen name="events_title_text_size">20sp</dimen>
+    <dimen name="events_title_side_margin">30dp</dimen>
+    <dimen name="events_title_top_margin">8dp</dimen>
+    <dimen name="events_date_top_margin">8dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="icon_width_event">8dp</dimen>
 </resources>
