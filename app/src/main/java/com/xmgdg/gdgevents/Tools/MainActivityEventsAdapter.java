@@ -1,15 +1,17 @@
 package com.xmgdg.gdgevents.Tools;
 
 import android.app.Activity;
+import android.os.Build;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.xmgdg.gdgevents.MainActivity;
 import com.xmgdg.gdgevents.R;
 import com.xmgdg.gdgevents.model.Topic;
 
@@ -24,7 +26,8 @@ import java.util.List;
 public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivityEventsAdapter.ViewHolder> {
 
 	private Activity activity;
-	private static String logtag = "主界面活动适配器";
+	private static final String logtag = "主界面活动适配器";
+	private int position;
 
 	private List<Topic> topicList;
 	private RecylcerViewOnItemClickListener listener;
@@ -34,7 +37,10 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 		this.activity = activity;
 	}
 
-	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+
+	public static class ViewHolder extends RecyclerView.ViewHolder implements
+			OnClickListener,View.OnCreateContextMenuListener {
+
 		//界面元素
 		public TextView eventTime, eventTitle, eventLocation;
 		public TextView EventTime, EventTitle, EventLocation, EventEndTime;
@@ -43,15 +49,11 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 
 		public ViewHolder(View v, RecylcerViewOnItemClickListener listener) {
 			super(v);
+
 			this.listener = listener;
 			v.setOnClickListener(this);
-//			v.setOnClickListener(new View.OnClickListener() {
-//				@Override
-//				public void onClick(View v) {
-//					Log.d(logtag, "onClick--> position = " + getPosition());
-//
-//				}
-//			});
+			v.setOnCreateContextMenuListener(this);
+
 			//todo:移除就界面
 			eventTime = (TextView) v.findViewById(R.id.events_time_text_view);
 			eventTitle = (TextView) v.findViewById(R.id.events_title_text_view);
@@ -72,6 +74,21 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 				listener.onItemClick(v, getPosition());
 			}
 		}
+
+		//长按监听器
+		@Override
+		public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+			Activity activity = MainActivity.activity;
+			menu.add(0, AppStat.MainEventsContextMenuID.share, 0, activity.getString(R
+					.string.share));
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+				menu.add(0, AppStat.MainEventsContextMenuID.addToCalendar, 1, activity
+						.getString(R.string.add_to_calendar));
+			}
+			menu.add(0, AppStat.MainEventsContextMenuID.openInGooglePlus, 2, activity
+					.getString(R.string.open_google_plus));
+		}
+
 	}
 
 
@@ -86,7 +103,7 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 	}
 
 	@Override
-	public void onBindViewHolder(ViewHolder holder, int position) {
+	public void onBindViewHolder(ViewHolder holder, final int position) {
 
 		//todo:移除就界面
 		//删除 +0800
@@ -99,11 +116,37 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 		holder.EventLocation.setText(topicList.get(position).getLocation());
 		holder.EventEndTime.setText("结束于:" + topicList.get(position).getEnd());
 
+		holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				setPosition(position);
+				return false;
+			}
+		});
+
+	}
+
+	@Override
+	public void onViewRecycled(ViewHolder holder) {
+		holder.itemView.setOnLongClickListener(null);
+		super.onViewRecycled(holder);
 	}
 
 	@Override
 	public int getItemCount() {
 		return topicList == null ? 0 : topicList.size();
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
+
+	public List<Topic> getTopicList() {
+		return topicList;
 	}
 
 	//更新数据
