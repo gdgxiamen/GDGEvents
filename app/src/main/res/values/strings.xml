@@ -7,4 +7,9 @@
     <string name="drawer_close">关闭抽屉</string>
     <string name="past_event">过往事件</string>
     <string name="server_error">服务错误,请重试</string>
+    <string name="share">分享</string>
+    <string name="add_to_calendar">新增到日历</string>
+    <string name="no_calendar_app_found">没有找到日历应用</string>
+    <string name="open_google_plus">使用Google+打开</string>
+    <string name="no_browser_app_found">没有找到浏览器应用</string>
 </resources>

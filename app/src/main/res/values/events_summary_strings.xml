@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="starttime">开始时间:</string>
+    <string name="location">地点:</string>
+    <string name="description">简介:</string>
+</resources>
