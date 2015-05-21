@@ -1,5 +1,8 @@
 package com.xmgdg.gdgevents.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,7 +10,7 @@ import org.json.JSONObject;
  * Created by ye on 15/5/17.
  *
  */
-public class Topic {
+public class Topic implements Parcelable {
 
     private String group;
     private String description;
@@ -146,23 +149,57 @@ public class Topic {
                 '}';
     }
 
+    public static final Parcelable.Creator<Topic> CREATOR   = new Parcelable.Creator<Topic>() {
 
-//    public static Topic fromJson(JSONObject json) throws JSONException {
-//        Topic topic = new Topic();
-//        topic.group = json.getString("group");
-//        topic.description = json.getString("description");
-//        topic.start = json.getString("start");
-//        topic.timezoneName = json.getString("timezoneName");
-//        topic.participantsCount = json.getString("participantsCount");
-//        topic.title = json.getString("title");
-//        topic.iconUrl = json.getString("iconUrl");
-//        topic.link = json.getString("link");
-//        topic.location = json.getString("location");
-//        topic.end = json.getString("end");
-//        topic.id = json.getString("id");
-//        topic.temporalRelation = json.getString("temporalRelation");
-//        topic.gPlusEventLink = json.getString("gPlusEventLink");
-//
-//        return topic;
-//    }
+        @Override
+        public Topic createFromParcel(Parcel source) {
+            return new Topic(source);
+        }
+
+        @Override
+        public Topic[] newArray(int size) {
+            return new Topic[0];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
+    private Topic(Parcel in) {
+        group = in.readString();
+        description = in.readString();
+        start = in.readString();
+        timezoneName = in.readString();
+        participantsCount = in.readString();
+        title = in.readString();
+        iconUrl = in.readString();
+        link = in.readString();
+        location = in.readString();
+        end = in.readString();
+        id = in.readString();
+        temporalRelation = in.readString();
+        gPlusEventLink = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(group);
+        dest.writeString(description);
+        dest.writeString(start);
+        dest.writeString(timezoneName);
+        dest.writeString(participantsCount);
+        dest.writeString(title);
+        dest.writeString(iconUrl);
+        dest.writeString(link);
+        dest.writeString(location);
+        dest.writeString(end);
+        dest.writeString(id);
+        dest.writeString(temporalRelation);
+        dest.writeString(gPlusEventLink);
+    }
+
+
 }

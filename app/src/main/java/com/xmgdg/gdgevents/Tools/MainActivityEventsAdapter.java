@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -26,25 +27,31 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 	private static String logtag = "主界面活动适配器";
 
 	private List<Topic> topicList;
+	private RecylcerViewOnItemClickListener listener;
 
 	public MainActivityEventsAdapter(List<Topic> topicList, Activity activity) {
 		this.topicList = topicList;
 		this.activity = activity;
 	}
 
-	public static class ViewHolder extends RecyclerView.ViewHolder {
+	public static class ViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 		//界面元素
 		public TextView eventTime, eventTitle, eventLocation;
 		public TextView EventTime, EventTitle, EventLocation, EventEndTime;
 
-		public ViewHolder(View v) {
+		private RecylcerViewOnItemClickListener listener;
+
+		public ViewHolder(View v, RecylcerViewOnItemClickListener listener) {
 			super(v);
-			v.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Log.d(logtag, "onClick--> position = " + getPosition());
-				}
-			});
+			this.listener = listener;
+			v.setOnClickListener(this);
+//			v.setOnClickListener(new View.OnClickListener() {
+//				@Override
+//				public void onClick(View v) {
+//					Log.d(logtag, "onClick--> position = " + getPosition());
+//
+//				}
+//			});
 			//todo:移除就界面
 			eventTime = (TextView) v.findViewById(R.id.events_time_text_view);
 			eventTitle = (TextView) v.findViewById(R.id.events_title_text_view);
@@ -58,6 +65,13 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 
 			//todo:可在这里添加部件的按键监听
 		}
+
+		@Override
+		public void onClick(View v) {
+			if(listener != null) {
+				listener.onItemClick(v, getPosition());
+			}
+		}
 	}
 
 
@@ -67,7 +81,7 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 		View v = LayoutInflater.from(parent.getContext())
 				.inflate(R.layout.main_events_card_view, parent, false);
 		// set the view's size, margins, paddings and layout parameters
-		ViewHolder vh = new ViewHolder((CardView) v);
+		ViewHolder vh = new ViewHolder((CardView) v, listener);
 		return vh;
 	}
 
@@ -97,5 +111,15 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 		this.topicList = topicList;
 		this.notifyDataSetChanged();
 	}
+
+	/** 设置item点击事件 **/
+	public void setOnItemClickListener(RecylcerViewOnItemClickListener listener) {
+		this.listener = listener;
+	}
+
+	public interface RecylcerViewOnItemClickListener {
+		public void onItemClick(View view, int position);
+	}
+
 
 }

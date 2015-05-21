@@ -1,7 +1,9 @@
 package com.xmgdg.gdgevents;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -21,6 +24,8 @@ import com.xmgdg.gdgevents.Tools.Tool;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
@@ -30,7 +35,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
  * 主界面,显示举办的活动
  *
  * */
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
 
 	//TAG
 	private static final String TAG = MainActivity.class.getName();
@@ -51,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	private MainEventsItems mainEventsItems;
 
 	private String logtag = "mainActivity";
+	private List<Topic> mTopicList = new ArrayList<Topic>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +72,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(mLayoutManager);
+
+
+
 
 		//SwipeRefresh
 		swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
@@ -94,9 +103,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		RequestManager.getInstance().getTopicInfo(new Response.Listener<List<Topic>>() {
 			@Override
 			public void onResponse(List<Topic> response) {
+				mTopicList = response;
 				//RecyclerView 数据填充
 				mainActivityEventsAdapter = new MainActivityEventsAdapter(response, MainActivity.this);
 				mRecyclerView.setAdapter(mainActivityEventsAdapter);
+				mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
 				swipeLayout.setRefreshing(false);
 				isRefresh = false;
 			}
@@ -149,5 +160,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	protected void onDestroy() {
 		super.onDestroy();
 		RequestManager.getInstance().cancel(this);
+	}
+
+	@Override
+	public void onItemClick(View view, int position) {
+		Intent intent = new Intent();
+		intent.putExtra("eventInfo", mTopicList.get(position));
+		intent.setClass(this, EventInfoActivity.class);
+		startActivity(intent);
 	}
 }
