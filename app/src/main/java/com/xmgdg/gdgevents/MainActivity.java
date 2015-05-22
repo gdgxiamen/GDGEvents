@@ -76,9 +76,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		mLayoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(mLayoutManager);
 
-
-
-
 		//SwipeRefresh
 		swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
 		if (Build.VERSION.SDK_INT >= 14) {
@@ -88,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		//Context Menu 监听器
 		onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
-
 	}
 
 	//上下文菜单被选定时的监听
@@ -134,7 +130,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		});
 	}
 
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -153,7 +148,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		if (id == R.id.action_settings) {
 			return true;
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -163,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		if (!isRefresh) {
 			isRefresh = true;
 			initData();
-
 		}
 	}
 

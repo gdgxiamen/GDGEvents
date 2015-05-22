@@ -35,7 +35,7 @@ public class MaterialDrawer {
 	private ActionBarDrawerToggle mDrawerToggle;
 	private Toolbar mtoolbar;
 
-	private String TITLES[] = {"title"};
+	private String TITLES[] = {"Events"};
 	private int ICONS[] = {R.mipmap.ic_launcher};
 	private String username= "";
 	private String usermail = "";
