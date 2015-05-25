@@ -39,11 +39,10 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 
 
 	public static class ViewHolder extends RecyclerView.ViewHolder implements
-			OnClickListener,View.OnCreateContextMenuListener {
+			OnClickListener, View.OnCreateContextMenuListener {
 
 		//界面元素
-		public TextView eventTime, eventTitle, eventLocation;
-		public TextView EventTime, EventTitle, EventLocation, EventEndTime;
+		public TextView EventTime, EventTitle, EventLocation, EventEndTime, EventIsPast;
 
 		private RecylcerViewOnItemClickListener listener;
 
@@ -54,23 +53,18 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 			v.setOnClickListener(this);
 			v.setOnCreateContextMenuListener(this);
 
-			//todo:移除就界面
-			eventTime = (TextView) v.findViewById(R.id.events_time_text_view);
-			eventTitle = (TextView) v.findViewById(R.id.events_title_text_view);
-			eventLocation = (TextView) v.findViewById(R.id.events_location_text_view);
-
 			EventTime = (TextView) v.findViewById(R.id.event_time);
 			EventTitle = (TextView) v.findViewById(R.id.event_title);
 			EventLocation = (TextView) v.findViewById(R.id.event_location);
 			EventEndTime = (TextView) v.findViewById(R.id.event_end_time);
-
+			EventIsPast = (TextView) v.findViewById(R.id.past);
 
 			//todo:可在这里添加部件的按键监听
 		}
 
 		@Override
 		public void onClick(View v) {
-			if(listener != null) {
+			if (listener != null) {
 				listener.onItemClick(v, getPosition());
 			}
 		}
@@ -105,16 +99,16 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 	@Override
 	public void onBindViewHolder(ViewHolder holder, final int position) {
 
-		//todo:移除就界面
 		//删除 +0800
-		holder.eventTime.setText(topicList.get(position).getStart().replace("+0800", ""));
-		holder.eventTitle.setText(topicList.get(position).getTitle());
-		holder.eventLocation.setText(topicList.get(position).getLocation());
-
 		holder.EventTime.setText(topicList.get(position).getStart().replace("+0800", ""));
 		holder.EventTitle.setText(topicList.get(position).getTitle());
 		holder.EventLocation.setText(topicList.get(position).getLocation());
 		holder.EventEndTime.setText("结束于:" + topicList.get(position).getEnd());
+		if (topicList.get(position).getTemporalRelation().compareTo("past") == 0) {
+			holder.EventIsPast.setVisibility(View.VISIBLE);
+		} else {
+			holder.EventIsPast.setVisibility(View.GONE);
+		}
 
 		holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
@@ -155,7 +149,9 @@ public class MainActivityEventsAdapter extends RecyclerView.Adapter<MainActivity
 		this.notifyDataSetChanged();
 	}
 
-	/** 设置item点击事件 **/
+	/**
+	 * 设置item点击事件 *
+	 */
 	public void setOnItemClickListener(RecylcerViewOnItemClickListener listener) {
 		this.listener = listener;
 	}

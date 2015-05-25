@@ -180,6 +180,8 @@ public class Topic implements Parcelable {
 		return 0;
 	}
 
+	public Topic() {
+	}
 
 	private Topic(Parcel in) {
 		group = in.readString();

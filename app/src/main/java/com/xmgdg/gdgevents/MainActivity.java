@@ -17,6 +17,7 @@ import android.view.View;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.xmgdg.gdgevents.DataBase.DataBaseAct;
 import com.xmgdg.gdgevents.Tools.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.Tools.MaterialDrawer;
 import com.xmgdg.gdgevents.Tools.OnMainEventsContextMenuSelect;
@@ -32,7 +33,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 
 /**
  * 主界面,显示举办的活动
- * */
+ */
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
 
 
@@ -46,16 +47,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	private RecyclerView mRecyclerView;
 	private RecyclerView.LayoutManager mLayoutManager;
 	private MainActivityEventsAdapter mainActivityEventsAdapter;
+	private int recyclerViewFirstPosition;
 
 	//下拉刷新
 	private boolean isRefresh = false;
 	private SwipeRefreshLayout swipeLayout;
 
 	//Context Menu 监听器
-	OnMainEventsContextMenuSelect onMainEventsContextMenuSelect;
+	private OnMainEventsContextMenuSelect onMainEventsContextMenuSelect;
+
+	//DataBase
+	private DataBaseAct dataBaseAct = DataBaseAct.getDataBaseAct();
 
 
-	private List<Topic> mTopicList = new ArrayList<Topic>();
+	private List<Topic> mTopicList = new ArrayList<>();
 
 	public static Activity activity;
 
@@ -75,6 +80,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		mRecyclerView.setHasFixedSize(true);
 		mLayoutManager = new LinearLayoutManager(this);
 		mRecyclerView.setLayoutManager(mLayoutManager);
+		//RecyclerView 数据填充
+		mainActivityEventsAdapter = new MainActivityEventsAdapter(mTopicList, this);
+		mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
+		mRecyclerView.setAdapter(mainActivityEventsAdapter);
+
 
 		//SwipeRefresh
 		swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
@@ -99,13 +109,26 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	@Override
 	protected void onResume() {
 		super.onResume();
+		initDataFromDataBase();
+		mRecyclerView.scrollToPosition(recyclerViewFirstPosition);
+	}
+
+	private void initDataFromDataBase() {
+		List<Topic> topics = dataBaseAct.readEvents("110967416369300099369");
+		mTopicList = topics;
+		mainActivityEventsAdapter.notifyDateChanged(topics);
+		if (topics.isEmpty()) {
 		/* 初始化时显示刷新进度条
 		*  第一行是解决初始化不出现刷新条的临时方法,后续可能会被 SwipeRefreshLayout 改进
 		* */
-		swipeLayout.setProgressViewOffset(false, 0,
-				(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, getResources().getDisplayMetrics()));
-		swipeLayout.setRefreshing(true);
-		initData();
+			swipeLayout.setProgressViewOffset(false, 0,
+					(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+							getResources().getDisplayMetrics()));
+			swipeLayout.setRefreshing(true);
+			initData();
+		}
+
+
 	}
 
 	private void initData() {
@@ -113,10 +136,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 			@Override
 			public void onResponse(List<Topic> response) {
 				mTopicList = response;
-				//RecyclerView 数据填充
-				mainActivityEventsAdapter = new MainActivityEventsAdapter(response, MainActivity.this);
-				mRecyclerView.setAdapter(mainActivityEventsAdapter);
-				mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
+				//写入数据库
+				dataBaseAct.addEvents(response);
+				mainActivityEventsAdapter.notifyDateChanged(response);
 				swipeLayout.setRefreshing(false);
 				isRefresh = false;
 			}
@@ -158,6 +180,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 			isRefresh = true;
 			initData();
 		}
+	}
+
+	@Override
+	protected void onPause() {
+		super.onPause();
+		recyclerViewFirstPosition = ((LinearLayoutManager) mLayoutManager)
+				.findFirstVisibleItemPosition();
 	}
 
 	@Override

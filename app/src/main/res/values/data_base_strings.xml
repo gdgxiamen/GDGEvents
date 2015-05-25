@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="DataBaseFileName">gdgEvents</string>
+    <string name="DataBaseTableMainEvents">MainEvents</string>
+    <string name="DataBaseID">id</string>
+    <string name="DataBaseGroupID">groupId</string>
+    <string name="DataBaseDescription">description</string>
+    <string name="DataBaseStart">start</string>
+    <string name="DataBaseTimezoneName">timezoneName</string>
+    <string name="DataBaseParticipantsCount">participantsCount</string>
+    <string name="DataBaseTitle">title</string>
+    <string name="DataBaseIconUrl">iconUrl</string>
+    <string name="DataBaseLink">link</string>
+    <string name="DataBaseLocation">location</string>
+    <string name="DataBaseEnd">end</string>
+    <string name="DataBaseTemporalRelation">temporalRelation</string>
+    <string name="DataBaseGPlusEventLink">gPlusEventLink</string>
+    <string name="DataBaseStartTimeMS">startTimeMS</string>
+
+</resources>

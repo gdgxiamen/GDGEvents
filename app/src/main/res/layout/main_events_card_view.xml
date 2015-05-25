@@ -15,149 +15,103 @@
     android:layout_marginTop="@dimen/card_margin"
     card_view:cardElevation="6dp">
 
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/event_image_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="48dp"
+            android:background="@color/Apptheme_700"
+            android:contentDescription="@null"/>
 
-            <ImageView
-                android:id="@+id/event_image_header"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@color/Apptheme_700"
-                android:contentDescription="@null"/>
+        <TextView
+            android:id="@+id/event_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:paddingRight="@dimen/margin_small"
+            android:paddingTop="@dimen/events_date_top_margin"
+            android:textColor="?android:textColorPrimaryInverse"
+            android:textSize="@dimen/normal_text_size"
+            android:textStyle="bold"
+            tools:ignore="RelativeOverlap"
+            tools:text="SAT, JUL 25"/>
 
-            <TextView
-                android:id="@+id/event_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:paddingRight="@dimen/margin_small"
-                android:paddingTop="@dimen/events_date_top_margin"
-                android:textColor="?android:textColorPrimaryInverse"
-                android:textSize="@dimen/normal_text_size"
-                android:textStyle="bold"
-                tools:ignore="RelativeOverlap"
-                tools:text="SAT, JUL 25"/>
-
-            <ImageView
-                android:id="@+id/icon"
-                android:layout_width="@dimen/icon_width_event"
-                android:layout_height="@dimen/icon_width_event"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="24dp"
-                android:contentDescription="@null"
-                android:scaleType="fitXY"
-                android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
-                android:visibility="gone"/>
-
-            <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignWithParentIfMissing="true"
-                android:layout_below="@id/event_image_header"
-                android:layout_marginBottom="@dimen/events_title_top_margin"
-                android:layout_marginTop="@dimen/events_title_top_margin"
-                android:layout_marginRight="@dimen/events_title_side_margin"
-                android:layout_marginLeft="@dimen/events_title_side_margin"
-                android:layout_toLeftOf="@+id/past"
-                android:layout_toRightOf="@+id/icon"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/event_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    tools:text="DevFest 2014"/>
-
-                <TextView
-                    android:id="@+id/event_location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:singleLine="true"
-                    android:textColor="?android:textColorPrimary"
-                    tools:text="Istanbul ITU"/>
-
-                <TextView
-                    android:id="@+id/event_end_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:singleLine="true"
-                    android:textColor="?android:textColorPrimary"
-                    tools:text="20:00"/>
-
-            </LinearLayout>
-
-
-            <TextView
-                android:id="@+id/past"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:gravity="end"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingTop="48dp"
-                android:text="@string/past_event"
-                android:textStyle="bold"
-                android:visibility="gone"
-                tools:visibility="visible"/>
-        </RelativeLayout>
-
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="@dimen/icon_width_event"
+            android:layout_height="@dimen/icon_width_event"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="24dp"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            android:src="@drawable/abc_ic_menu_share_mtrl_alpha"
+            android:visibility="gone"/>
 
         <LinearLayout
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
+            android:layout_alignWithParentIfMissing="true"
+            android:layout_below="@id/event_image_header"
+            android:layout_marginBottom="@dimen/events_title_top_margin"
+            android:layout_marginLeft="@dimen/events_title_side_margin"
+            android:layout_marginRight="@dimen/events_title_side_margin"
+            android:layout_marginTop="@dimen/events_title_top_margin"
+            android:layout_toLeftOf="@+id/past"
+            android:layout_toRightOf="@+id/icon"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/events_time_text_view"
-                android:layout_width="fill_parent"
-                android:layout_height="48sp"
-                android:background="@color/Apptheme_700"
-                android:gravity="end|center_vertical"
-                android:text="2015-05-15 15:00  "
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/normal_text_size"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/events_title_text_view"
-                android:layout_width="fill_parent"
+                android:id="@+id/event_title"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/events_title_side_margin"
-                android:layout_marginRight="@dimen/events_title_side_margin"
-                android:layout_marginTop="@dimen/events_title_top_margin"
-                android:text="厦门GDG【社区开源APP项目讨论】"
-                android:textSize="@dimen/events_title_text_size"
-                android:textStyle="bold"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                tools:text="DevFest 2014"/>
 
             <TextView
-                android:id="@+id/events_location_text_view"
-                android:layout_width="fill_parent"
+                android:id="@+id/event_location"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/events_title_top_margin"
-                android:layout_marginLeft="@dimen/events_title_side_margin"
-                android:layout_marginRight="@dimen/events_title_side_margin"
-                android:layout_marginTop="@dimen/events_title_top_margin"
-                android:text="厦门市软件园二期望海路31号1楼厦门GDG孵化器"
-                android:textSize="@dimen/normal_text_size"/>
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:textColor="?android:textColorPrimary"
+                tools:text="Istanbul ITU"/>
+
+            <TextView
+                android:id="@+id/event_end_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                android:textColor="?android:textColorPrimary"
+                tools:text="20:00"/>
 
         </LinearLayout>
 
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/past"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="end"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="48dp"
+            android:text="@string/past_event"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+    </RelativeLayout>
+
+
 </android.support.v7.widget.CardView>
 
