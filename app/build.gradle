@@ -32,4 +32,5 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.google.android.gms:play-services:7.0.0'
 }

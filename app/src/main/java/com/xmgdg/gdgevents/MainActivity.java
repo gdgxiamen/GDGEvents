@@ -10,13 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.gms.common.SignInButton;
 import com.xmgdg.gdgevents.DataBase.DataBaseAct;
 import com.xmgdg.gdgevents.Tools.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.Tools.MaterialDrawer;
@@ -34,11 +37,14 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * 主界面,显示举办的活动
  */
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
+public class MainActivity extends AppCompatActivity
+		implements SwipeRefreshLayout.OnRefreshListener,
+		GooglePlusLoginUtils.GPlusLoginStatus,
+		MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
 
 
 	//TAG
-	private static final String logtag = MainActivity.class.getName();
+	private static final String TAG = MainActivity.class.getName();
 
 	//toolbar
 	private Toolbar toolbar;
@@ -64,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 	public static Activity activity;
 
+	private GooglePlusLoginUtils gLogin;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
 		mRecyclerView.setAdapter(mainActivityEventsAdapter);
 
-
 		//SwipeRefresh
 		swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
 		if (Build.VERSION.SDK_INT >= 14) {
@@ -95,6 +101,25 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		//Context Menu 监听器
 		onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
+
+		gLogin = new GooglePlusLoginUtils(this, R.id.btn_sign_in);
+		gLogin.setLoginStatus(this);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		gLogin.connect();
+	}
+	@Override
+	protected void onStop() {
+		super.onStop();
+		gLogin.disconnect();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		gLogin.onActivityResult(requestCode, resultCode, data);
 	}
 
 	//上下文菜单被选定时的监听
@@ -201,5 +226,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		intent.putExtra("eventInfo", mTopicList.get(position));
 		intent.setClass(this, EventInfoActivity.class);
 		startActivity(intent);
+	}
+
+	@Override
+	public void OnSuccessGPlusLogin(Bundle profile) {
+		Log.i(TAG,profile.getString(GooglePlusLoginUtils.NAME));
+		Log.i(TAG,profile.getString(GooglePlusLoginUtils.EMAIL));
+		Log.i(TAG,profile.getString(GooglePlusLoginUtils.PHOTO));
+		Log.i(TAG,profile.getString(GooglePlusLoginUtils.PROFILE));
 	}
 }
