@@ -11,9 +11,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -42,6 +48,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 	//toolbar
 	private Toolbar toolbar;
+    private Spinner mSpinner;
 
 	//RecyclerView
 	private RecyclerView mRecyclerView;
@@ -61,6 +68,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
 	private List<Topic> mTopicList = new ArrayList<>();
+    private String[] cityIDs;
+    private final static int INIT_POSITION = 0;
 
 	public static Activity activity;
 
@@ -74,6 +83,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		toolbar = (Toolbar) findViewById(R.id.tool_bar);
 		setSupportActionBar(toolbar);
 		new MaterialDrawer(this, toolbar);
+
+		//spinner
+		initSpinner();
+        cityIDs = getResources().getStringArray(R.array.city_ids);
 
 		//RecyclerView
 		mRecyclerView = (RecyclerView) findViewById(R.id.mainActivityRecyclerView);
@@ -95,6 +108,32 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 		//Context Menu 监听器
 		onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
+	}
+
+	private void initSpinner() {
+		View spinnerContanner = LayoutInflater.from(this).inflate(R.layout.tool_bar_spinner, toolbar, false);
+		Toolbar.LayoutParams layoutParams = new Toolbar.LayoutParams(
+				ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+		);
+        toolbar.addView(spinnerContanner, layoutParams);
+        //获得城市
+        final String[] cities = getResources().getStringArray(R.array.city_names);
+        mSpinner = (Spinner) spinnerContanner.findViewById(R.id.tool_bar_spinner);
+        mSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, cities));
+
+		mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+			@Override
+			public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+				Toast.makeText(MainActivity.this, cities[position], Toast.LENGTH_LONG).show();
+                updateDisplay(position);
+			}
+
+			@Override
+			public void onNothingSelected(AdapterView<?> parent) {
+
+			}
+		});
+
 	}
 
 	//上下文菜单被选定时的监听
@@ -125,32 +164,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 					(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
 							getResources().getDisplayMetrics()));
 			swipeLayout.setRefreshing(true);
-			initData();
+			updateDisplay(INIT_POSITION);
 		}
 
 
 	}
 
-	private void initData() {
-		RequestManager.getInstance().getTopicInfo(new Response.Listener<List<Topic>>() {
-			@Override
-			public void onResponse(List<Topic> response) {
-				mTopicList = response;
-				//写入数据库
-				dataBaseAct.addEvents(response);
-				mainActivityEventsAdapter.notifyDateChanged(response);
-				swipeLayout.setRefreshing(false);
-				isRefresh = false;
-			}
-		}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				Crouton.makeText(MainActivity.this, getString(R.string.server_error), Style.ALERT).show();
-				swipeLayout.setRefreshing(false);
-				isRefresh = false;
-			}
-		});
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -178,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 	public void onRefresh() {
 		if (!isRefresh) {
 			isRefresh = true;
-			initData();
+			updateDisplay(INIT_POSITION);
 		}
 	}
 
@@ -202,4 +221,30 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 		intent.setClass(this, EventInfoActivity.class);
 		startActivity(intent);
 	}
+
+    //传入城市序号，更新显示列表
+    public void updateDisplay(int posistion) {
+
+        RequestManager.getInstance().getTopicInfo(RequestManager.getUrl(cityIDs[posistion]), new Response.Listener<List<Topic>>() {
+            @Override
+            public void onResponse(List<Topic> response) {
+                mTopicList = response;
+                //写入数据库
+                dataBaseAct.addEvents(response);
+                mainActivityEventsAdapter.notifyDateChanged(response);
+                swipeLayout.setRefreshing(false);
+                isRefresh = false;
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Crouton.makeText(MainActivity.this, getString(R.string.server_error), Style.ALERT).show();
+                swipeLayout.setRefreshing(false);
+                isRefresh = false;
+            }
+        });
+    }
+
+
+
 }

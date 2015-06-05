@@ -22,8 +22,8 @@ public class TopicRequest extends Request<List<Topic>> {
     private final Gson gson = new Gson();
     private Response.Listener<List<Topic>> mListener;
 
-    public TopicRequest(Response.Listener<List<Topic>> listener,Response.ErrorListener errorlistener) {
-        super(Method.GET, RequestManager.API_XIAMEN, errorlistener);
+    public TopicRequest(String url, Response.Listener<List<Topic>> listener, Response.ErrorListener errorlistener) {
+        super(Method.GET, url, errorlistener);
         mListener = listener;
     }
 
