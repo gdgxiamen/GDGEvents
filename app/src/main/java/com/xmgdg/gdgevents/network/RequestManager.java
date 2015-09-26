@@ -1,7 +1,11 @@
 package com.xmgdg.gdgevents.network;
 
+import android.graphics.Bitmap;
+import android.support.v4.util.LruCache;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.model.Topic;
@@ -23,6 +27,29 @@ public class RequestManager {
 
     private static RequestManager requestInstance;
 
+    private ImageLoader mImageLoader;
+    private RequestQueue mRequestQueue;
+
+    private RequestManager() {
+        mRequestQueue = Volley.newRequestQueue(App.getInstance());
+
+        mImageLoader = new ImageLoader(mRequestQueue,
+                new ImageLoader.ImageCache() {
+                    private final LruCache<String, Bitmap>
+                            cache = new LruCache<String, Bitmap>(20);
+
+                    @Override
+                    public Bitmap getBitmap(String url) {
+                        return cache.get(url);
+                    }
+
+                    @Override
+                    public void putBitmap(String url, Bitmap bitmap) {
+                        cache.put(url, bitmap);
+                    }
+                });
+    }
+
     public static RequestManager getInstance() {
         if(requestInstance == null) {
             synchronized (RequestManager.class) {
@@ -34,11 +61,10 @@ public class RequestManager {
         return requestInstance;
     }
 
-    private RequestQueue mRequestQueue;
-
-    private RequestManager() {
-        mRequestQueue = Volley.newRequestQueue(App.getInstance());
+    public ImageLoader getImageLoader() {
+        return mImageLoader;
     }
+
 
     public void getTopicInfo(Response.Listener<List<Topic>> listener, Response.ErrorListener errorListener) {
         mRequestQueue.add(new TopicRequest(listener, errorListener));

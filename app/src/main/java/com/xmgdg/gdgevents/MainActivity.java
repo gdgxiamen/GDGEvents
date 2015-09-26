@@ -3,6 +3,7 @@ package com.xmgdg.gdgevents;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,16 +16,14 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.android.gms.common.SignInButton;
 import com.xmgdg.gdgevents.DataBase.DataBaseAct;
 import com.xmgdg.gdgevents.Tools.MainActivityEventsAdapter;
-import com.xmgdg.gdgevents.Tools.MaterialDrawer;
 import com.xmgdg.gdgevents.Tools.OnMainEventsContextMenuSelect;
 import com.xmgdg.gdgevents.Tools.Tool;
+import com.xmgdg.gdgevents.drawer.MaterialDrawer;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
 
@@ -38,201 +37,195 @@ import de.keyboardsurfer.android.widget.crouton.Style;
  * 主界面,显示举办的活动
  */
 public class MainActivity extends AppCompatActivity
-		implements SwipeRefreshLayout.OnRefreshListener,
-		GooglePlusLoginUtils.GPlusLoginStatus,
-		MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
+        implements SwipeRefreshLayout.OnRefreshListener,
+        GooglePlusLoginUtils.GPlusLoginStatus,
+        MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
 
 
-	//TAG
-	private static final String TAG = MainActivity.class.getName();
+    //TAG
+    private static final String TAG = MainActivity.class.getName();
+    public static Activity activity;
+    //toolbar
+    private Toolbar toolbar;
+    private MaterialDrawer drawer;
+    //RecyclerView
+    private RecyclerView mRecyclerView;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private MainActivityEventsAdapter mainActivityEventsAdapter;
+    private int recyclerViewFirstPosition;
+    //下拉刷新
+    private boolean isRefresh = false;
+    private SwipeRefreshLayout swipeLayout;
+    //Context Menu 监听器
+    private OnMainEventsContextMenuSelect onMainEventsContextMenuSelect;
+    //DataBase
+    private DataBaseAct dataBaseAct = DataBaseAct.getDataBaseAct();
+    private List<Topic> mTopicList = new ArrayList<>();
+    private GooglePlusLoginUtils gLogin;
 
-	//toolbar
-	private Toolbar toolbar;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        activity = this;
+        //Toolbar
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        drawer = new MaterialDrawer(this, toolbar);
 
-	//RecyclerView
-	private RecyclerView mRecyclerView;
-	private RecyclerView.LayoutManager mLayoutManager;
-	private MainActivityEventsAdapter mainActivityEventsAdapter;
-	private int recyclerViewFirstPosition;
+        //RecyclerView
+        mRecyclerView = (RecyclerView) findViewById(R.id.mainActivityRecyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        //RecyclerView 数据填充
+        mainActivityEventsAdapter = new MainActivityEventsAdapter(mTopicList, this);
+        mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
+        mRecyclerView.setAdapter(mainActivityEventsAdapter);
 
-	//下拉刷新
-	private boolean isRefresh = false;
-	private SwipeRefreshLayout swipeLayout;
+        //SwipeRefresh
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
+        if (Build.VERSION.SDK_INT >= 14) {
+            Tool.set下拉刷新颜色(swipeLayout);
+        }
+        swipeLayout.setOnRefreshListener(this);
 
-	//Context Menu 监听器
-	private OnMainEventsContextMenuSelect onMainEventsContextMenuSelect;
+        //Context Menu 监听器
+        onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
 
-	//DataBase
-	private DataBaseAct dataBaseAct = DataBaseAct.getDataBaseAct();
+        gLogin = new GooglePlusLoginUtils(this, R.id.btn_sign_in);
+        gLogin.setLoginStatus(this);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        gLogin.connect();
+    }
 
-	private List<Topic> mTopicList = new ArrayList<>();
+    @Override
+    protected void onStop() {
+        super.onStop();
+        gLogin.disconnect();
+    }
 
-	public static Activity activity;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        gLogin.onActivityResult(requestCode, resultCode, data);
+    }
 
-	private GooglePlusLoginUtils gLogin;
+    //上下文菜单被选定时的监听
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		activity = this;
-		//Toolbar
-		toolbar = (Toolbar) findViewById(R.id.tool_bar);
-		setSupportActionBar(toolbar);
-		new MaterialDrawer(this, toolbar);
+        Topic topic = mainActivityEventsAdapter.getTopicList().get(
+                mainActivityEventsAdapter.getPosition());
+        return onMainEventsContextMenuSelect.OnLongClickListener(item, topic);
+    }
 
-		//RecyclerView
-		mRecyclerView = (RecyclerView) findViewById(R.id.mainActivityRecyclerView);
-		mRecyclerView.setHasFixedSize(true);
-		mLayoutManager = new LinearLayoutManager(this);
-		mRecyclerView.setLayoutManager(mLayoutManager);
-		//RecyclerView 数据填充
-		mainActivityEventsAdapter = new MainActivityEventsAdapter(mTopicList, this);
-		mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
-		mRecyclerView.setAdapter(mainActivityEventsAdapter);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initDataFromDataBase();
+        mRecyclerView.scrollToPosition(recyclerViewFirstPosition);
+    }
 
-		//SwipeRefresh
-		swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
-		if (Build.VERSION.SDK_INT >= 14) {
-			Tool.set下拉刷新颜色(swipeLayout);
-		}
-		swipeLayout.setOnRefreshListener(this);
-
-		//Context Menu 监听器
-		onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
-
-		gLogin = new GooglePlusLoginUtils(this, R.id.btn_sign_in);
-		gLogin.setLoginStatus(this);
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		gLogin.connect();
-	}
-	@Override
-	protected void onStop() {
-		super.onStop();
-		gLogin.disconnect();
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		gLogin.onActivityResult(requestCode, resultCode, data);
-	}
-
-	//上下文菜单被选定时的监听
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-
-		Topic topic = mainActivityEventsAdapter.getTopicList().get(
-				mainActivityEventsAdapter.getPosition());
-		return onMainEventsContextMenuSelect.OnLongClickListener(item, topic);
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		initDataFromDataBase();
-		mRecyclerView.scrollToPosition(recyclerViewFirstPosition);
-	}
-
-	private void initDataFromDataBase() {
-		List<Topic> topics = dataBaseAct.readEvents("110967416369300099369");
-		mTopicList = topics;
-		mainActivityEventsAdapter.notifyDateChanged(topics);
-		if (topics.isEmpty()) {
-		/* 初始化时显示刷新进度条
-		*  第一行是解决初始化不出现刷新条的临时方法,后续可能会被 SwipeRefreshLayout 改进
+    private void initDataFromDataBase() {
+        List<Topic> topics = dataBaseAct.readEvents("110967416369300099369");
+        mTopicList = topics;
+        mainActivityEventsAdapter.notifyDateChanged(topics);
+        if (topics.isEmpty()) {
+        /* 初始化时显示刷新进度条
+        *  第一行是解决初始化不出现刷新条的临时方法,后续可能会被 SwipeRefreshLayout 改进
 		* */
-			swipeLayout.setProgressViewOffset(false, 0,
-					(int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
-							getResources().getDisplayMetrics()));
-			swipeLayout.setRefreshing(true);
-			initData();
-		}
+            swipeLayout.setProgressViewOffset(false, 0,
+                    (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
+                            getResources().getDisplayMetrics()));
+            swipeLayout.setRefreshing(true);
+            initData();
+        }
 
 
-	}
+    }
 
-	private void initData() {
-		RequestManager.getInstance().getTopicInfo(new Response.Listener<List<Topic>>() {
-			@Override
-			public void onResponse(List<Topic> response) {
-				mTopicList = response;
-				//写入数据库
-				dataBaseAct.addEvents(response);
-				mainActivityEventsAdapter.notifyDateChanged(response);
-				swipeLayout.setRefreshing(false);
-				isRefresh = false;
-			}
-		}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				Crouton.makeText(MainActivity.this, getString(R.string.server_error), Style.ALERT).show();
-				swipeLayout.setRefreshing(false);
-				isRefresh = false;
-			}
-		});
-	}
+    private void initData() {
+        RequestManager.getInstance().getTopicInfo(new Response.Listener<List<Topic>>() {
+            @Override
+            public void onResponse(List<Topic> response) {
+                mTopicList = response;
+                //写入数据库
+                dataBaseAct.addEvents(response);
+                mainActivityEventsAdapter.notifyDateChanged(response);
+                swipeLayout.setRefreshing(false);
+                isRefresh = false;
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Crouton.makeText(MainActivity.this, getString(R.string.server_error), Style.ALERT).show();
+                swipeLayout.setRefreshing(false);
+                isRefresh = false;
+            }
+        });
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.menu_main, menu);
-		return true;
-	}
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-		//noinspection SimplifiableIfStatement
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	//SwipeRefreshLayout 的刷新调用
-	@Override
-	public void onRefresh() {
-		if (!isRefresh) {
-			isRefresh = true;
-			initData();
-		}
-	}
+    //SwipeRefreshLayout 的刷新调用
+    @Override
+    public void onRefresh() {
+        if (!isRefresh) {
+            isRefresh = true;
+            initData();
+        }
+    }
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		recyclerViewFirstPosition = ((LinearLayoutManager) mLayoutManager)
-				.findFirstVisibleItemPosition();
-	}
+    @Override
+    protected void onPause() {
+        super.onPause();
+        recyclerViewFirstPosition = ((LinearLayoutManager) mLayoutManager)
+                .findFirstVisibleItemPosition();
+    }
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		RequestManager.getInstance().cancel(this);
-	}
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RequestManager.getInstance().cancel(this);
+    }
 
-	@Override
-	public void onItemClick(View view, int position) {
-		Intent intent = new Intent();
-		intent.putExtra("eventInfo", mTopicList.get(position));
-		intent.setClass(this, EventInfoActivity.class);
-		startActivity(intent);
-	}
+    @Override
+    public void onItemClick(View view, int position) {
+        Intent intent = new Intent();
+        intent.putExtra("eventInfo", mTopicList.get(position));
+        intent.setClass(this, EventInfoActivity.class);
+        startActivity(intent);
+    }
 
-	@Override
-	public void OnSuccessGPlusLogin(Bundle profile) {
-		Log.i(TAG,profile.getString(GooglePlusLoginUtils.NAME));
-		Log.i(TAG,profile.getString(GooglePlusLoginUtils.EMAIL));
-		Log.i(TAG,profile.getString(GooglePlusLoginUtils.PHOTO));
-		Log.i(TAG,profile.getString(GooglePlusLoginUtils.PROFILE));
-	}
+    @Override
+    public void OnSuccessGPlusLogin(Bundle profile) {
+        String name = profile.getString(GooglePlusLoginUtils.NAME);
+        String email = profile.getString(GooglePlusLoginUtils.EMAIL);
+        Uri photo = Uri.parse(profile.getString(GooglePlusLoginUtils.PHOTO));
+        drawer.setUserInfo(name, email, photo);
+        Log.i(TAG, profile.getString(GooglePlusLoginUtils.PROFILE));
+    }
 }

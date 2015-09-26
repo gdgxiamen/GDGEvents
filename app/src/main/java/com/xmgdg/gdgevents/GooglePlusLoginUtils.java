@@ -19,16 +19,15 @@ import com.google.android.gms.plus.model.people.Person;
 /**
  * Created by xcold on 15-5-26.
  */
-public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener,View.OnClickListener {
-    private String TAG = "GooglePlusLoginUtils";
-    /* Request code used to invoke sign in user interactions. */
-    private static final int RC_SIGN_IN = 0;
-    private static final int PROFILE_PIC_SIZE = 400;
+public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
     public static final String NAME = "name";
     public static final String EMAIL = "email";
     public static final String PHOTO = "photo";
-    public static final String PROFILE= "profile";
-
+    public static final String PROFILE = "profile";
+    /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 0;
+    private static final int PROFILE_PIC_SIZE = 400;
+    private String TAG = "GooglePlusLoginUtils";
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
     private boolean mIntentInProgress;
@@ -38,31 +37,27 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
     private SignInButton btnSignIn;
     private Context ctx;
     private GPlusLoginStatus loginstatus;
-    public interface GPlusLoginStatus{
-        public void OnSuccessGPlusLogin(Bundle profile);
-    }
 
-    public GooglePlusLoginUtils(Context ctx,int btnRes){
+    public GooglePlusLoginUtils(Context ctx, int btnRes) {
         Log.i(TAG, "GooglePlusLoginUtils");
-        this.ctx= ctx;
-        this.btnSignIn =(SignInButton) ((Activity)ctx).findViewById(btnRes);
+        this.ctx = ctx;
+        this.btnSignIn = (SignInButton) ((Activity) ctx).findViewById(btnRes);
         btnSignIn.setOnClickListener(this);
         // Initializing google plus api client
         mGoogleApiClient = new GoogleApiClient.Builder(ctx)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
-
-
     }
 
-    public void setLoginStatus(GPlusLoginStatus loginStatus){
+    public void setLoginStatus(GPlusLoginStatus loginStatus) {
         this.loginstatus = loginStatus;
     }
+
     @Override
     public void onConnectionFailed(ConnectionResult result) {
         Log.i(TAG, "onConnectionFailed");
-        Log.i(TAG,"Error Code "+ result.getErrorCode());
+        Log.i(TAG, "Error Code " + result.getErrorCode());
         if (!result.hasResolution()) {
             GooglePlayServicesUtil.getErrorDialog(result.getErrorCode(), (Activity) ctx, 0).show();
             return;
@@ -80,25 +75,31 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
             }
         }
     }
-    public void setSignInClicked(boolean value){
-        mSignInClicked  =value;
+
+    public void setSignInClicked(boolean value) {
+        mSignInClicked = value;
     }
-    public void setIntentInProgress(boolean value){
+
+    public void setIntentInProgress(boolean value) {
         mIntentInProgress = value;
     }
-    public void connect(){
+
+    public void connect() {
         mGoogleApiClient.connect();
     }
-    public void reconnect(){
+
+    public void reconnect() {
         if (!mGoogleApiClient.isConnecting()) {
             mGoogleApiClient.connect();
         }
     }
-    public void disconnect(){
+
+    public void disconnect() {
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
     }
+
     private void signInWithGplus() {
         Log.i(TAG, "signInWithGplus");
         if (!mGoogleApiClient.isConnecting()) {
@@ -106,28 +107,31 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
             resolveSignInError();
         }
     }
+
     private void resolveSignInError() {
         Log.i(TAG, "resolveSignInError");
         if (mConnectionResult.hasResolution()) {
             try {
                 mIntentInProgress = true;
-                mConnectionResult.startResolutionForResult((Activity)ctx, RC_SIGN_IN);
+                mConnectionResult.startResolutionForResult((Activity) ctx, RC_SIGN_IN);
             } catch (IntentSender.SendIntentException e) {
                 mIntentInProgress = false;
                 mGoogleApiClient.connect();
             }
         }
     }
+
     @Override
     public void onConnected(Bundle arg0) {
         Log.i(TAG, "onConnected");
         mSignInClicked = false;
-        Toast.makeText(ctx, "User is connected!", Toast.LENGTH_LONG).show();
-
+        Log.w(TAG, "User is connected!");
+        btnSignIn.setVisibility(View.GONE);
         // Get user's information
         getProfileInformation();
 
     }
+
     @Override
     public void onConnectionSuspended(int arg0) {
         Log.i(TAG, "onConnectionSuspended");
@@ -144,18 +148,15 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
                 String personPhotoUrl = currentPerson.getImage().getUrl();
                 String personGooglePlusProfile = currentPerson.getUrl();
                 String email = Plus.AccountApi.getAccountName(mGoogleApiClient);
-
-                Log.e(TAG, "Name: " + personName + ", plusProfile: "
-                        + personGooglePlusProfile + ", email: " + email
-                        + ", Image: " + personPhotoUrl);
-
-
                 // by default the profile url gives 50x50 px image only
                 // we can replace the value with whatever dimension we want by
                 // replacing sz=X
                 personPhotoUrl = personPhotoUrl.substring(0,
                         personPhotoUrl.length() - 2)
                         + PROFILE_PIC_SIZE;
+                Log.e(TAG, "Name: " + personName + ", plusProfile: "
+                        + personGooglePlusProfile + ", email: " + email
+                        + ", Image: " + personPhotoUrl);
 
                 Bundle profile = new Bundle();
                 profile.putString(NAME, personName);
@@ -175,13 +176,15 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
             e.printStackTrace();
         }
     }
+
     @Override
     public void onClick(View v) {
         signInWithGplus();
     }
-    public void onActivityResult(int requestCode,int responseCode,Intent intent){
+
+    public void onActivityResult(int requestCode, int responseCode, Intent intent) {
         if (requestCode == RC_SIGN_IN) {
-            if (responseCode != ((Activity)ctx).RESULT_OK) {
+            if (responseCode != ((Activity) ctx).RESULT_OK) {
                 setSignInClicked(false);
             }
             setIntentInProgress(false);
@@ -189,5 +192,7 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
         }
     }
 
-
+    public interface GPlusLoginStatus {
+        void OnSuccessGPlusLogin(Bundle profile);
+    }
 }
