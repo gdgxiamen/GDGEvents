@@ -26,9 +26,11 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.xmgdg.gdgevents.DataBase.DataBaseAct;
+import com.xmgdg.gdgevents.Tools.AppStat;
 import com.xmgdg.gdgevents.Tools.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.Tools.OnMainEventsContextMenuSelect;
 import com.xmgdg.gdgevents.Tools.Tool;
+import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.drawer.MaterialDrawer;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity
 
     //citys
     private String[] cityIDs;
-    private final static int INIT_POSITION = 0;
+    private int initPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,13 @@ public class MainActivity extends AppCompatActivity
 
         gLogin = new GooglePlusLoginUtils(this, R.id.btn_sign_in);
         gLogin.setLoginStatus(this);
+
+        String initpos = App.getPrefer(AppStat.Preferences.InitPosition);
+        if (initpos.compareTo("") == 0) {
+            initPosition = 0;
+        } else {
+            initPosition = Integer.valueOf(initpos);
+        }
 
         //spinner
         initSpinner();
@@ -155,11 +164,13 @@ public class MainActivity extends AppCompatActivity
         final String[] cities = getResources().getStringArray(R.array.city_names);
         mSpinner = (Spinner) spinnerContanner.findViewById(R.id.tool_bar_spinner);
         mSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, cities));
-
+        mSpinner.setSelection(initPosition);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(MainActivity.this, cities[position], Toast.LENGTH_LONG).show();
+                initPosition = position;
+                App.setPrefer(AppStat.Preferences.InitPosition, String.valueOf(position));
                 updateDisplay(position);
             }
 
@@ -172,7 +183,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initDataFromDataBase() {
-        List<Topic> topics = dataBaseAct.readEvents("110967416369300099369");
+        List<Topic> topics = dataBaseAct.readEvents(cityIDs[initPosition]);
         mTopicList = topics;
         mainActivityEventsAdapter.notifyDateChanged(topics);
         if (topics.isEmpty()) {
@@ -183,7 +194,7 @@ public class MainActivity extends AppCompatActivity
                     (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
                             getResources().getDisplayMetrics()));
             swipeLayout.setRefreshing(true);
-            updateDisplay(INIT_POSITION);
+            updateDisplay(initPosition);
         }
 
 
@@ -193,6 +204,7 @@ public class MainActivity extends AppCompatActivity
     //传入城市序号，更新显示列表
     public void updateDisplay(int posistion) {
 
+        swipeLayout.setRefreshing(true);
         RequestManager.getInstance().getTopicInfo(RequestManager.getUrl(cityIDs[posistion]), new Response.Listener<List<Topic>>() {
 
             @Override
@@ -242,7 +254,7 @@ public class MainActivity extends AppCompatActivity
     public void onRefresh() {
         if (!isRefresh) {
             isRefresh = true;
-            updateDisplay(INIT_POSITION);
+            updateDisplay(initPosition);
         }
     }
 
