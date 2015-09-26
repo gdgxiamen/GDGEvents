@@ -12,4 +12,44 @@
     <string name="no_calendar_app_found">没有找到日历应用</string>
     <string name="open_google_plus">使用Google+打开</string>
     <string name="no_browser_app_found">没有找到浏览器应用</string>
+
+    <string-array name="city_names" >
+        <item>厦门</item>
+        <item>北京</item>
+        <item>上海</item>
+        <item>广州</item>
+        <item>杭州</item>
+        <item>深圳</item>
+        <item>香港</item>
+        <item>南阳</item>
+        <item>南京</item>
+        <item>合肥</item>
+        <item>兰州</item>
+        <item>西安</item>
+        <item>珠海</item>
+        <item>张家口</item>
+        <item>乌鲁木齐</item>
+        <item>成都</item>
+        <item>苏州</item>
+    </string-array>
+
+    <string-array name="city_ids" >
+        <item>110967416369300099369</item>
+        <item>114116331730392650768</item>
+        <item>113435072768494915958</item>
+        <item>114920001331857622210</item>
+        <item>107736551552874801480</item>
+        <item>116409718883299342983</item>
+        <item>101989816978489369807</item>
+        <item>114126261414805241249</item>
+        <item>115699391295509082719</item>
+        <item>114665061922064488837</item>
+        <item>107219447444236191734</item>
+        <item>114935565019424673192</item>
+        <item>113382777332300419074</item>
+        <item>114911793225988198469</item>
+        <item>113990579362109292040</item>
+        <item>115508453153648032576</item>
+        <item>100160462017014431473</item>
+    </string-array>
 </resources>

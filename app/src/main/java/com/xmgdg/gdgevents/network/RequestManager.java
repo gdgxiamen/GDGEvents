@@ -19,11 +19,12 @@ import java.util.List;
 public class RequestManager {
 
     private static final String API_HOST = "https://developers.google.com/events/feed/json?group=";
-    private static final String ID_XIAMEN = "110967416369300099369";
-    private static final String STARTTIME_XIAMEN = "1356998399";
+    private static final String STARTTIME = "1356998399";
 
-    public static final String API_XIAMEN = API_HOST + ID_XIAMEN + "&start=" + STARTTIME_XIAMEN;
-
+    /** 获取地区对应接口地址 **/
+    public static String getUrl(String ID_CITY) {
+        return API_HOST + ID_CITY + "&start=" + STARTTIME;
+    }
 
     private static RequestManager requestInstance;
 
@@ -65,9 +66,8 @@ public class RequestManager {
         return mImageLoader;
     }
 
-
-    public void getTopicInfo(Response.Listener<List<Topic>> listener, Response.ErrorListener errorListener) {
-        mRequestQueue.add(new TopicRequest(listener, errorListener));
+    public void getTopicInfo(String url, Response.Listener<List<Topic>> listener, Response.ErrorListener errorListener) {
+        mRequestQueue.add(new TopicRequest(url, listener, errorListener));
     }
 
     /** **/

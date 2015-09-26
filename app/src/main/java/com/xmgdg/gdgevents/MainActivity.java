@@ -13,9 +13,15 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -48,6 +54,7 @@ public class MainActivity extends AppCompatActivity
     //toolbar
     private Toolbar toolbar;
     private MaterialDrawer drawer;
+    private Spinner mSpinner;
     //RecyclerView
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -62,6 +69,10 @@ public class MainActivity extends AppCompatActivity
     private DataBaseAct dataBaseAct = DataBaseAct.getDataBaseAct();
     private List<Topic> mTopicList = new ArrayList<>();
     private GooglePlusLoginUtils gLogin;
+
+    //citys
+    private String[] cityIDs;
+    private final static int INIT_POSITION = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +106,10 @@ public class MainActivity extends AppCompatActivity
 
         gLogin = new GooglePlusLoginUtils(this, R.id.btn_sign_in);
         gLogin.setLoginStatus(this);
+
+        //spinner
+        initSpinner();
+        cityIDs = getResources().getStringArray(R.array.city_ids);
     }
 
     @Override
@@ -130,6 +145,32 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.scrollToPosition(recyclerViewFirstPosition);
     }
 
+    private void initSpinner() {
+        View spinnerContanner = LayoutInflater.from(this).inflate(R.layout.tool_bar_spinner, toolbar, false);
+        Toolbar.LayoutParams layoutParams = new Toolbar.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
+        );
+        toolbar.addView(spinnerContanner, layoutParams);
+        //获得城市
+        final String[] cities = getResources().getStringArray(R.array.city_names);
+        mSpinner = (Spinner) spinnerContanner.findViewById(R.id.tool_bar_spinner);
+        mSpinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, cities));
+
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(MainActivity.this, cities[position], Toast.LENGTH_LONG).show();
+                updateDisplay(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
+
     private void initDataFromDataBase() {
         List<Topic> topics = dataBaseAct.readEvents("110967416369300099369");
         mTopicList = topics;
@@ -142,15 +183,20 @@ public class MainActivity extends AppCompatActivity
                     (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24,
                             getResources().getDisplayMetrics()));
             swipeLayout.setRefreshing(true);
-            initData();
+            updateDisplay(INIT_POSITION);
         }
 
 
     }
 
-    private void initData() {
-        RequestManager.getInstance().getTopicInfo(new Response.Listener<List<Topic>>() {
+
+    //传入城市序号，更新显示列表
+    public void updateDisplay(int posistion) {
+
+        RequestManager.getInstance().getTopicInfo(RequestManager.getUrl(cityIDs[posistion]), new Response.Listener<List<Topic>>() {
+
             @Override
+
             public void onResponse(List<Topic> response) {
                 mTopicList = response;
                 //写入数据库
@@ -168,6 +214,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -195,7 +242,7 @@ public class MainActivity extends AppCompatActivity
     public void onRefresh() {
         if (!isRefresh) {
             isRefresh = true;
-            initData();
+            updateDisplay(INIT_POSITION);
         }
     }
 
@@ -228,4 +275,5 @@ public class MainActivity extends AppCompatActivity
         drawer.setUserInfo(name, email, photo);
         Log.i(TAG, profile.getString(GooglePlusLoginUtils.PROFILE));
     }
+
 }
