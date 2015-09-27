@@ -17,6 +17,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    //为了解决部分第三方库重复打包了META-INF的问题
+    packagingOptions {
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+    }
+    lintOptions {
+        abortOnError false
+    }
 }
 
 dependencies {
@@ -35,4 +43,8 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile 'com.google.android.gms:play-services:8.1.0'
+
+    //leancloud
+    //avoscloud-sdk 为 LeanCloud基础包
+    compile 'cn.leancloud.android:avoscloud-sdk:v3.7.5'
 }

@@ -3,6 +3,7 @@ package com.xmgdg.gdgevents.app;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import com.avos.avoscloud.AVOSCloud;
 import com.xmgdg.gdgevents.Tools.AppStat;
 
 /**
@@ -29,6 +30,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         application = this;
+        AVOSCloud.initialize(this, Secret.GDG_LeanCloud_AppId, Secret.GDG_LeanCloud_AppKey);
         preferences = getSharedPreferences(AppStat.Preferences.FileName, App.MODE_PRIVATE);
     }
 }

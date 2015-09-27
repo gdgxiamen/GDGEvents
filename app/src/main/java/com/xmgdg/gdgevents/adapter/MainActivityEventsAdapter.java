@@ -1,4 +1,4 @@
-package com.xmgdg.gdgevents.Tools;
+package com.xmgdg.gdgevents.adapter;
 
 import android.app.Activity;
 import android.os.Build;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.xmgdg.gdgevents.MainActivity;
 import com.xmgdg.gdgevents.R;
+import com.xmgdg.gdgevents.Tools.AppStat;
 import com.xmgdg.gdgevents.model.Topic;
 
 import java.util.List;

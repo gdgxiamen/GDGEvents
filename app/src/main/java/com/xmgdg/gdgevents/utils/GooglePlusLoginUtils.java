@@ -1,4 +1,4 @@
-package com.xmgdg.gdgevents;
+package com.xmgdg.gdgevents.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,6 +15,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.xmgdg.gdgevents.Tools.Tool;
 
 /**
  * Created by xcold on 15-5-26.
@@ -103,6 +104,8 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
     private void signInWithGplus() {
         Log.i(TAG, "signInWithGplus");
         if (!mGoogleApiClient.isConnecting()) {
+            Log.i(TAG, "mGoogleApiClient is Not Connecting");
+            Toast.makeText(ctx, "mGoogleApiClient is Not Connecting", Toast.LENGTH_LONG).show();
             mSignInClicked = true;
             resolveSignInError();
         }
@@ -110,7 +113,7 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
 
     private void resolveSignInError() {
         Log.i(TAG, "resolveSignInError");
-        if (mConnectionResult.hasResolution()) {
+        if (mConnectionResult != null && mConnectionResult.hasResolution()) {
             try {
                 mIntentInProgress = true;
                 mConnectionResult.startResolutionForResult((Activity) ctx, RC_SIGN_IN);
@@ -126,10 +129,10 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
         Log.i(TAG, "onConnected");
         mSignInClicked = false;
         Log.w(TAG, "User is connected!");
-        btnSignIn.setVisibility(View.GONE);
         // Get user's information
-        getProfileInformation();
-
+        if (getProfileInformation()) {
+            btnSignIn.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -138,7 +141,7 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
         mGoogleApiClient.connect();
     }
 
-    private void getProfileInformation() {
+    private boolean getProfileInformation() {
         Log.i(TAG, "getProfileInformation");
         try {
             if (Plus.PeopleApi.getCurrentPerson(mGoogleApiClient) != null) {
@@ -166,15 +169,19 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
 
                 loginstatus.OnSuccessGPlusLogin(profile);
 
-                //   new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
+                Tool.SignUpInLeanCloud(email, personPhotoUrl, personPhotoUrl, personName, (Activity) ctx);
 
+                //   new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
+                return true;
             } else {
                 Toast.makeText(ctx,
                         "Person information is null", Toast.LENGTH_LONG).show();
+                Log.w(TAG, "Person information is null");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     @Override

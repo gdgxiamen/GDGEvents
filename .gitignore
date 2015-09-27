@@ -123,3 +123,4 @@ manifest-merger-release-report.txt
 #密钥
 *.jks
 
+app/src/main/java/com/xmgdg/gdgevents/app/Secret.java

@@ -27,13 +27,14 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.xmgdg.gdgevents.DataBase.DataBaseAct;
 import com.xmgdg.gdgevents.Tools.AppStat;
-import com.xmgdg.gdgevents.Tools.MainActivityEventsAdapter;
+import com.xmgdg.gdgevents.adapter.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.Tools.OnMainEventsContextMenuSelect;
 import com.xmgdg.gdgevents.Tools.Tool;
 import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.drawer.MaterialDrawer;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
+import com.xmgdg.gdgevents.utils.GooglePlusLoginUtils;
 
 import java.util.ArrayList;
 import java.util.List;
