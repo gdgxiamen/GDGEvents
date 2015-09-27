@@ -40,13 +40,22 @@ public class Tool {
         }
     }
 
-    public static void SignUpInLeanCloud(final String Email, final String passWord, String face, String showName, final Activity activity) {
+    /**
+     * 注册并登陆账号
+     *
+     * @param Email    用户邮箱，用作账号
+     * @param password 密码
+     * @param face     用户头像
+     * @param showName 用户显示的名称
+     * @param activity Activity
+     */
+    public static void SignUpInLeanCloud(final String Email, final String password, String face, String showName, final Activity activity) {
 
-        final String tag = "LeanCloud 账号体系";
+        final String tag = "LeanCloud 注册";
 
         AVUser user = new AVUser();
         user.setUsername(Email);
-        user.setPassword(passWord);
+        user.setPassword(password);
         user.setEmail(Email);
 
         // 其他属性可以像其他AVObject对象一样使用put方法添加
@@ -61,17 +70,30 @@ public class Tool {
                     Log.w(tag, "注册失败：" + e.getMessage());
                     Toast.makeText(activity, "注册失败" + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
-                AVUser.logInInBackground(Email, passWord, new LogInCallback<AVUser>() {
-                    @Override
-                    public void done(AVUser avUser, AVException e) {
-                        if (avUser != null) {
-                            Log.i(tag, "登陆成功");
-                        } else {
-                            Log.w(tag, "登陆失败：" + e.getMessage());
-                            Toast.makeText(activity, "登陆失败" + e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-                });
+                SignInLeanCloud(Email, password, activity);
+            }
+        });
+    }
+
+    /**
+     * 登陆账号
+     *
+     * @param userName 用户名，应为邮箱
+     * @param password 密码
+     * @param activity Activity
+     */
+    public static void SignInLeanCloud(String userName, String password, final Activity activity) {
+        final String tag = "LeanCloud 登陆";
+
+        AVUser.logInInBackground(userName, password, new LogInCallback<AVUser>() {
+            @Override
+            public void done(AVUser avUser, AVException e) {
+                if (avUser != null) {
+                    Log.i(tag, "登陆成功");
+                } else {
+                    Log.w(tag, "登陆失败：" + e.getMessage());
+                    Toast.makeText(activity, "登陆失败" + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
     }

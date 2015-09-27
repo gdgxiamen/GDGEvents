@@ -15,6 +15,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.xmgdg.gdgevents.Tools.AppStat;
 import com.xmgdg.gdgevents.Tools.Tool;
 
 /**
@@ -26,7 +27,6 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
     public static final String PHOTO = "photo";
     public static final String PROFILE = "profile";
     /* Request code used to invoke sign in user interactions. */
-    private static final int RC_SIGN_IN = 0;
     private static final int PROFILE_PIC_SIZE = 400;
     private String TAG = "GooglePlusLoginUtils";
     /* Client used to interact with Google APIs. */
@@ -116,7 +116,7 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
         if (mConnectionResult != null && mConnectionResult.hasResolution()) {
             try {
                 mIntentInProgress = true;
-                mConnectionResult.startResolutionForResult((Activity) ctx, RC_SIGN_IN);
+                mConnectionResult.startResolutionForResult((Activity) ctx, AppStat.MainActivityIntentCode.GPLUS_SIGN_IN);
             } catch (IntentSender.SendIntentException e) {
                 mIntentInProgress = false;
                 mGoogleApiClient.connect();
@@ -190,7 +190,7 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
     }
 
     public void onActivityResult(int requestCode, int responseCode, Intent intent) {
-        if (requestCode == RC_SIGN_IN) {
+        if (requestCode == AppStat.MainActivityIntentCode.GPLUS_SIGN_IN) {
             if (responseCode != ((Activity) ctx).RESULT_OK) {
                 setSignInClicked(false);
             }

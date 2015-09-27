@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -27,13 +27,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.xmgdg.gdgevents.DataBase.DataBaseAct;
 import com.xmgdg.gdgevents.Tools.AppStat;
-import com.xmgdg.gdgevents.adapter.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.Tools.OnMainEventsContextMenuSelect;
 import com.xmgdg.gdgevents.Tools.Tool;
+import com.xmgdg.gdgevents.adapter.MainActivityEventsAdapter;
 import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.drawer.MaterialDrawer;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
+import com.xmgdg.gdgevents.ui.BaseActivity;
+import com.xmgdg.gdgevents.ui.login.LoginActivity;
 import com.xmgdg.gdgevents.utils.GooglePlusLoginUtils;
 
 import java.util.ArrayList;
@@ -45,7 +47,7 @@ import de.keyboardsurfer.android.widget.crouton.Style;
 /**
  * 主界面,显示举办的活动
  */
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener,
         GooglePlusLoginUtils.GPlusLoginStatus,
         MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
@@ -71,8 +73,10 @@ public class MainActivity extends AppCompatActivity
     //DataBase
     private DataBaseAct dataBaseAct = DataBaseAct.getDataBaseAct();
     private List<Topic> mTopicList = new ArrayList<>();
-    private GooglePlusLoginUtils gLogin;
 
+    //login button
+    private GooglePlusLoginUtils gLogin;
+    private Button loginButton;
     //citys
     private String[] cityIDs;
     private int initPosition = 0;
@@ -82,44 +86,56 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         activity = this;
-        //Toolbar
+    }
+
+    @Override
+    protected void findView() {
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        mRecyclerView = (RecyclerView) findViewById(R.id.mainActivityRecyclerView);
+        loginButton = (Button) findViewById(R.id.login_button);
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
+    }
+
+    @Override
+    protected void initView() {
         setSupportActionBar(toolbar);
         drawer = new MaterialDrawer(this, toolbar);
-
-        //RecyclerView
-        mRecyclerView = (RecyclerView) findViewById(R.id.mainActivityRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        //RecyclerView 数据填充
-        mainActivityEventsAdapter = new MainActivityEventsAdapter(mTopicList, this);
-        mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
-        mRecyclerView.setAdapter(mainActivityEventsAdapter);
-
-        //SwipeRefresh
-        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.mainActivitySwipeToRefreash);
-        if (Build.VERSION.SDK_INT >= 14) {
-            Tool.set下拉刷新颜色(swipeLayout);
-        }
-        swipeLayout.setOnRefreshListener(this);
-
-        //Context Menu 监听器
-        onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
-
-        gLogin = new GooglePlusLoginUtils(this, R.id.btn_sign_in);
-        gLogin.setLoginStatus(this);
-
+        gLogin = new GooglePlusLoginUtils(this, R.id.btn_gplus_sign_in);
         String initpos = App.getPrefer(AppStat.Preferences.InitPosition);
         if (initpos.compareTo("") == 0) {
             initPosition = 0;
         } else {
             initPosition = Integer.valueOf(initpos);
         }
-
-        //spinner
         initSpinner();
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        //RecyclerView 数据填充
+        mainActivityEventsAdapter = new MainActivityEventsAdapter(mTopicList, this);
+        mRecyclerView.setAdapter(mainActivityEventsAdapter);
+        //SwipeRefresh
+        if (Build.VERSION.SDK_INT >= 14) {
+            Tool.set下拉刷新颜色(swipeLayout);
+        }
+
+    }
+
+    @Override
+    protected void setViewEvent() {
         cityIDs = getResources().getStringArray(R.array.city_ids);
+        gLogin.setLoginStatus(this);
+        mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
+        onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
+        swipeLayout.setOnRefreshListener(this);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent login = new Intent(activity, LoginActivity.class);
+                activity.startActivityForResult(login, AppStat.MainActivityIntentCode.SIGN_IN);
+            }
+        });
     }
 
     @Override
@@ -136,7 +152,17 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        gLogin.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case AppStat.MainActivityIntentCode.GPLUS_SIGN_IN:
+                gLogin.onActivityResult(requestCode, resultCode, data);
+                break;
+            case AppStat.MainActivityIntentCode.SIGN_IN:
+
+                break;
+            default:
+                Log.w(TAG, "Unknown requestCode:" + requestCode);
+        }
     }
 
     //上下文菜单被选定时的监听
@@ -287,6 +313,7 @@ public class MainActivity extends AppCompatActivity
         Uri photo = Uri.parse(profile.getString(GooglePlusLoginUtils.PHOTO));
         drawer.setUserInfo(name, email, photo);
         Log.i(TAG, profile.getString(GooglePlusLoginUtils.PROFILE));
+        loginButton.setVisibility(View.GONE);
     }
 
 }

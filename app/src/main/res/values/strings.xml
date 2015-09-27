@@ -52,4 +52,8 @@
         <item>115508453153648032576</item>
         <item>100160462017014431473</item>
     </string-array>
+    <string name="title_activity_login">登陆</string>
+    <string name="user_email_address">您的邮箱</string>
+    <string name="user_password">您的密码</string>
+    <string name="sign_up">注册</string>
 </resources>

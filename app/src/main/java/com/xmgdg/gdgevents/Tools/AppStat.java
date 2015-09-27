@@ -41,4 +41,9 @@ public class AppStat {
         public static final String InitPosition = "InitPosition";
     }
 
+    public static class MainActivityIntentCode {
+        public static final int GPLUS_SIGN_IN = 0;
+        public static final int SIGN_IN = 1;
+    }
+
 }

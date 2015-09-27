@@ -1,10 +1,14 @@
 package com.xmgdg.gdgevents.app;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 
 import com.avos.avoscloud.AVOSCloud;
 import com.xmgdg.gdgevents.Tools.AppStat;
+
+import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 /**
  * Created by ye on 15/5/18.
@@ -13,6 +17,7 @@ public class App extends Application {
 
     private static SharedPreferences preferences;
     private static Application application;
+    private static HashMap<String, WeakReference<Activity>> mActivitys = new HashMap<>();
 
     public static String getPrefer(String Name) {
         return preferences.getString(Name, "");
@@ -24,6 +29,20 @@ public class App extends Application {
 
     public static Application getApplication() {
         return application;
+    }
+
+    /**
+     * 设置Activity引用
+     *
+     * @param activity 新增的activity
+     */
+    public static synchronized void setActivitys(Activity activity) {
+        WeakReference<Activity> reference = new WeakReference<Activity>(activity);
+        mActivitys.put(activity.getClass().getSimpleName(), reference);
+    }
+
+    public static Activity getActivity(String ActivityName) {
+        return mActivitys.get(ActivityName).get();
     }
 
     @Override

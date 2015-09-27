@@ -11,4 +11,6 @@
     <dimen name="events_date_top_margin">16dp</dimen>
     <dimen name="card_margin">8dp</dimen>
     <dimen name="icon_width_event">8dp</dimen>
+    <dimen name="normal_edit_text_size">16sp</dimen>
+    <dimen name="small_title_size">24sp</dimen>
 </resources>
