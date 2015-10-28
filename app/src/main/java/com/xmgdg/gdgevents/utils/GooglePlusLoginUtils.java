@@ -22,10 +22,6 @@ import com.xmgdg.gdgevents.Tools.Tool;
  * Created by xcold on 15-5-26.
  */
 public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
-    public static final String NAME = "name";
-    public static final String EMAIL = "email";
-    public static final String PHOTO = "photo";
-    public static final String PROFILE = "profile";
     /* Request code used to invoke sign in user interactions. */
     private static final int PROFILE_PIC_SIZE = 400;
     private String TAG = "GooglePlusLoginUtils";
@@ -37,7 +33,6 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
 
     private SignInButton btnSignIn;
     private Context ctx;
-    private GPlusLoginStatus loginstatus;
 
     public GooglePlusLoginUtils(Context ctx, int btnRes) {
         Log.i(TAG, "GooglePlusLoginUtils");
@@ -49,10 +44,6 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).addApi(Plus.API)
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
-    }
-
-    public void setLoginStatus(GPlusLoginStatus loginStatus) {
-        this.loginstatus = loginStatus;
     }
 
     @Override
@@ -161,17 +152,7 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
                         + personGooglePlusProfile + ", email: " + email
                         + ", Image: " + personPhotoUrl);
 
-                Bundle profile = new Bundle();
-                profile.putString(NAME, personName);
-                profile.putString(EMAIL, email);
-                profile.putString(PHOTO, personPhotoUrl);
-                profile.putString(PROFILE, personGooglePlusProfile);
-
-                loginstatus.OnSuccessGPlusLogin(profile);
-
                 Tool.SignUpInLeanCloud(email, personPhotoUrl, personPhotoUrl, personName, (Activity) ctx);
-
-                //   new LoadProfileImage(imgProfilePic).execute(personPhotoUrl);
                 return true;
             } else {
                 Toast.makeText(ctx,
@@ -191,15 +172,11 @@ public class GooglePlusLoginUtils implements GoogleApiClient.ConnectionCallbacks
 
     public void onActivityResult(int requestCode, int responseCode, Intent intent) {
         if (requestCode == AppStat.MainActivityIntentCode.GPLUS_SIGN_IN) {
-            if (responseCode != ((Activity) ctx).RESULT_OK) {
+            if (responseCode != Activity.RESULT_OK) {
                 setSignInClicked(false);
             }
             setIntentInProgress(false);
             reconnect();
         }
-    }
-
-    public interface GPlusLoginStatus {
-        void OnSuccessGPlusLogin(Bundle profile);
     }
 }

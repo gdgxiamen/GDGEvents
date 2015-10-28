@@ -8,6 +8,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.xmgdg.gdgevents.otto.BusProvider;
+import com.xmgdg.gdgevents.otto.FragmentResume;
+
 /**
  * Created by qixingchen on 15/8/31.
  * Fragment 的抽象
@@ -39,6 +42,31 @@ public abstract class BaseFragment extends Fragment {
         super.onAttach(context);
         mContext = context;
         mActivity = getActivity();
+        try {
+            BusProvider.getInstance().register(this);
+        } catch (IllegalArgumentException ignore) {
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        try {
+            BusProvider.getInstance().unregister(this);
+        } catch (IllegalArgumentException ignore) {
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.getInstance().post(new FragmentResume(true, TAG));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.getInstance().post(new FragmentResume(false, TAG));
     }
 
     protected abstract void findViews(View view);

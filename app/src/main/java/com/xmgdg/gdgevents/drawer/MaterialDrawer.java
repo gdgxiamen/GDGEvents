@@ -79,9 +79,11 @@ public class MaterialDrawer {
 
     }
 
-    public void setUserInfo(String name, String email, Uri profile) {
+    public void setUserInfo(String name, String email, String photo) {
         Name.setText(name);
         Email.setText(email);
-        Profile.setImageUrl(String.valueOf(profile), RequestManager.getInstance().getImageLoader());
+        if (photo != null) {
+            Profile.setImageUrl(photo, RequestManager.getInstance().getImageLoader());
+        }
     }
 }

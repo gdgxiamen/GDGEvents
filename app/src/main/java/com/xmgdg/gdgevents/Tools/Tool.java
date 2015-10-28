@@ -9,6 +9,8 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.SignUpCallback;
+import com.xmgdg.gdgevents.otto.BusProvider;
+import com.xmgdg.gdgevents.otto.UserInfo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -90,6 +92,10 @@ public class Tool {
             public void done(AVUser avUser, AVException e) {
                 if (avUser != null) {
                     Log.i(tag, "登陆成功");
+                    String personName = avUser.getString("showName"),
+                            email = avUser.getEmail(),
+                            personPhotoUrl = avUser.getString("face");
+                    BusProvider.getInstance().post(new UserInfo(personName, email, personPhotoUrl));
                 } else {
                     Log.w(tag, "登陆失败：" + e.getMessage());
                     Toast.makeText(activity, "登陆失败" + e.getMessage(), Toast.LENGTH_LONG).show();

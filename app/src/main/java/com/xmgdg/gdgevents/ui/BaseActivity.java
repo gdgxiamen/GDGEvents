@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.xmgdg.gdgevents.app.App;
+import com.xmgdg.gdgevents.otto.BusProvider;
 
 /**
  * Created by qixingchen on 15/8/31.
@@ -27,6 +28,19 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         App.setActivitys(this);
+        try {
+            BusProvider.getInstance().register(this);
+        } catch (IllegalArgumentException ignore) {
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        try {
+            BusProvider.getInstance().unregister(this);
+        } catch (IllegalArgumentException ignore) {
+        }
     }
 
     /**

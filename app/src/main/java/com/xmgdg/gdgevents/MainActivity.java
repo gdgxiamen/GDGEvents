@@ -3,7 +3,6 @@ package com.xmgdg.gdgevents;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -25,6 +24,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.squareup.otto.Subscribe;
 import com.xmgdg.gdgevents.DataBase.DataBaseAct;
 import com.xmgdg.gdgevents.Tools.AppStat;
 import com.xmgdg.gdgevents.Tools.OnMainEventsContextMenuSelect;
@@ -34,6 +34,7 @@ import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.drawer.MaterialDrawer;
 import com.xmgdg.gdgevents.model.Topic;
 import com.xmgdg.gdgevents.network.RequestManager;
+import com.xmgdg.gdgevents.otto.UserInfo;
 import com.xmgdg.gdgevents.ui.BaseActivity;
 import com.xmgdg.gdgevents.ui.login.LoginActivity;
 import com.xmgdg.gdgevents.utils.GooglePlusLoginUtils;
@@ -49,7 +50,6 @@ import de.keyboardsurfer.android.widget.crouton.Style;
  */
 public class MainActivity extends BaseActivity
         implements SwipeRefreshLayout.OnRefreshListener,
-        GooglePlusLoginUtils.GPlusLoginStatus,
         MainActivityEventsAdapter.RecylcerViewOnItemClickListener {
 
 
@@ -125,7 +125,6 @@ public class MainActivity extends BaseActivity
     @Override
     protected void setViewEvent() {
         cityIDs = getResources().getStringArray(R.array.city_ids);
-        gLogin.setLoginStatus(this);
         mainActivityEventsAdapter.setOnItemClickListener(MainActivity.this);
         onMainEventsContextMenuSelect = new OnMainEventsContextMenuSelect(this);
         swipeLayout.setOnRefreshListener(this);
@@ -306,14 +305,11 @@ public class MainActivity extends BaseActivity
         startActivity(intent);
     }
 
-    @Override
-    public void OnSuccessGPlusLogin(Bundle profile) {
-        String name = profile.getString(GooglePlusLoginUtils.NAME);
-        String email = profile.getString(GooglePlusLoginUtils.EMAIL);
-        Uri photo = Uri.parse(profile.getString(GooglePlusLoginUtils.PHOTO));
-        drawer.setUserInfo(name, email, photo);
-        Log.i(TAG, profile.getString(GooglePlusLoginUtils.PROFILE));
+    @Subscribe
+    public void onLoginSuccess(UserInfo userInfo) {
+        drawer.setUserInfo(userInfo.personName, userInfo.email, userInfo.personPhotoUrl);
         loginButton.setVisibility(View.GONE);
+        findViewById(R.id.btn_gplus_sign_in).setVisibility(View.GONE);
     }
 
 }

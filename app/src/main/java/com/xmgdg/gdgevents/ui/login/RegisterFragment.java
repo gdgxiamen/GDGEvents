@@ -14,35 +14,34 @@ import com.xmgdg.gdgevents.R;
 import com.xmgdg.gdgevents.Tools.Tool;
 import com.xmgdg.gdgevents.ui.BaseFragment;
 
-/**
- * 登陆界面
- */
-public class LoginActivityFragment extends BaseFragment {
+public class RegisterFragment extends BaseFragment {
 
-    private TextInputLayout userNameInputLayout, passwordInputLayout;
-    private Button signInButton, signUpButton;
-    private SignUp signUp;
 
-    public LoginActivityFragment() {
+    private android.support.design.widget.TextInputLayout userNameInputLayout;
+    private android.support.design.widget.TextInputLayout passwordInputLayout;
+    private android.widget.Button signUpButton;
+
+    public RegisterFragment() {
+        // Required empty public constructor
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_login, container, false);
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_register, container, false);
     }
 
     @Override
     protected void findViews(View view) {
-        userNameInputLayout = (TextInputLayout) view.findViewById(R.id.user_name_input_layout);
-        passwordInputLayout = (TextInputLayout) view.findViewById(R.id.password_input_layout);
-        signInButton = (Button) view.findViewById(R.id.btn_sign_in);
-        signUpButton = (Button) view.findViewById(R.id.btn_sign_up);
+        this.signUpButton = (Button) view.findViewById(R.id.btn_sign_up);
+        this.passwordInputLayout = (TextInputLayout) view.findViewById(R.id.password_input_layout);
+        this.userNameInputLayout = (TextInputLayout) view.findViewById(R.id.user_name_input_layout);
     }
 
     @Override
     protected void initViewsAndSetEvent() {
-
         userNameInputLayout.setError("请输入电子邮箱地址");
         userNameInputLayout.setErrorEnabled(false);
 
@@ -71,32 +70,18 @@ public class LoginActivityFragment extends BaseFragment {
             }
         });
 
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String name = username.getText().toString();
-                if (android.util.Patterns.EMAIL_ADDRESS.matcher(name).matches()) {
-                    Tool.SignInLeanCloud(name, passwordInputLayout.getEditText().getText().toString(), getActivity());
+                String password = passwordInputLayout.getEditText().getText().toString();
+                if (android.util.Patterns.EMAIL_ADDRESS.matcher(name).matches() && password.compareTo("") != 0) {
+                    Tool.SignUpInLeanCloud(name, password, null, name, getActivity());
                     mActivity.finish();
                 }
             }
         });
-
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (signUp != null) {
-                    signUp.signUp();
-                }
-            }
-        });
     }
 
-    public void setSignUp(SignUp signUp) {
-        this.signUp = signUp;
-    }
 
-    public interface SignUp {
-        void signUp();
-    }
 }
