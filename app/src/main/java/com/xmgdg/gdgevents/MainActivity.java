@@ -232,9 +232,7 @@ public class MainActivity extends BaseActivity
 
         swipeLayout.setRefreshing(true);
         RequestManager.getInstance().getTopicInfo(RequestManager.getUrl(cityIDs[posistion]), new Response.Listener<List<Topic>>() {
-
             @Override
-
             public void onResponse(List<Topic> response) {
                 mTopicList = response;
                 //写入数据库

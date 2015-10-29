@@ -9,6 +9,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVUser;
 import com.avos.avoscloud.LogInCallback;
 import com.avos.avoscloud.SignUpCallback;
+import com.xmgdg.gdgevents.app.App;
 import com.xmgdg.gdgevents.otto.BusProvider;
 import com.xmgdg.gdgevents.otto.UserInfo;
 
@@ -96,6 +97,7 @@ public class Tool {
                             email = avUser.getEmail(),
                             personPhotoUrl = avUser.getString("face");
                     BusProvider.getInstance().post(new UserInfo(personName, email, personPhotoUrl));
+                    App.setAvUser(avUser);
                 } else {
                     Log.w(tag, "登陆失败：" + e.getMessage());
                     Toast.makeText(activity, "登陆失败" + e.getMessage(), Toast.LENGTH_LONG).show();

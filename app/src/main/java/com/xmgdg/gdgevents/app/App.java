@@ -5,6 +5,8 @@ import android.app.Application;
 import android.content.SharedPreferences;
 
 import com.avos.avoscloud.AVOSCloud;
+import com.avos.avoscloud.AVUser;
+import com.xmgdg.gdgevents.Tools.Alarm;
 import com.xmgdg.gdgevents.Tools.AppStat;
 
 import java.lang.ref.WeakReference;
@@ -18,6 +20,15 @@ public class App extends Application {
     private static SharedPreferences preferences;
     private static Application application;
     private static HashMap<String, WeakReference<Activity>> mActivitys = new HashMap<>();
+    private static AVUser avUser;
+
+    public static AVUser getAvUser() {
+        return avUser;
+    }
+
+    public static void setAvUser(AVUser avUser) {
+        App.avUser = avUser;
+    }
 
     public static String getPrefer(String Name) {
         return preferences.getString(Name, "");
@@ -51,5 +62,6 @@ public class App extends Application {
         application = this;
         AVOSCloud.initialize(this, Secret.GDG_LeanCloud_AppId, Secret.GDG_LeanCloud_AppKey);
         preferences = getSharedPreferences(AppStat.Preferences.FileName, App.MODE_PRIVATE);
+        Alarm.SetAlarm(getApplicationContext());
     }
 }

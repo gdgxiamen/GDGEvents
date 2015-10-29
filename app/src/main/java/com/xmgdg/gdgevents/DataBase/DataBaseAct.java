@@ -21,7 +21,7 @@ import java.util.List;
  */
 public class DataBaseAct {
 
-    private static final String logtag = "数据库操作";
+    private static final String TAG = "数据库操作";
     private static DataBaseAct dataBaseAct;
     //class内部用
     private Application mapplication;
@@ -55,7 +55,7 @@ public class DataBaseAct {
 
     //Add
     //添加一个活动
-    private void addEvent(Topic topic) {
+    public void addEvent(Topic topic) {
         ContentValues content = new ContentValues();
 
         content.put(mcontext.getString(R.string.DataBaseID), topic.getId());
@@ -108,6 +108,26 @@ public class DataBaseAct {
         topic.setgPlusEventLink(cursor.getString(AppStat.DataBaseColumnIndex.gPlusEventLink));
 
         return topic;
+    }
+
+    /**
+     * 根据ID判断此活动是否已存在
+     *
+     * @param eventID 活动ID
+     * @return 如果存在返回 true ,否则返回 false
+     */
+    public boolean isEventAlreadyExist(String eventID) {
+        Cursor dbresult = db.query(
+                mcontext.getString(R.string.DataBaseTableMainEvents), null,
+                mcontext.getString(R.string.DataBaseID) + "=?",
+                new String[]{eventID}, null, null, null);
+        if (0 == dbresult.getCount()) {
+            dbresult.close();
+            return false;
+        } else {
+            dbresult.close();
+            return true;
+        }
     }
 
     //获取所有活动

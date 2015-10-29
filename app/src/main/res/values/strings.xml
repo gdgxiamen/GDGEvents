@@ -13,7 +13,7 @@
     <string name="open_google_plus">使用Google+打开</string>
     <string name="no_browser_app_found">没有找到浏览器应用</string>
 
-    <string-array name="city_names" >
+    <string-array name="city_names">
         <item>厦门</item>
         <item>北京</item>
         <item>上海</item>
@@ -33,7 +33,7 @@
         <item>苏州</item>
     </string-array>
 
-    <string-array name="city_ids" >
+    <string-array name="city_ids">
         <item>110967416369300099369</item>
         <item>114116331730392650768</item>
         <item>113435072768494915958</item>
@@ -57,6 +57,5 @@
     <string name="user_password">您的密码</string>
     <string name="sign_up">注册</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Notificaiton">ALARM_SERVICE.Notification.BROADCAST</string>
 </resources>
